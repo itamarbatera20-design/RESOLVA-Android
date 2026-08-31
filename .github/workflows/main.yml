@@ -1,158 +1,172 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RESOLVA 2.0.5</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#f3f6fa;color:#172033;font-family:Arial,sans-serif}
-.app{max-width:520px;margin:auto;min-height:100vh;background:#fff}
-header{padding:18px 20px;border-bottom:1px solid #e5e9f0;position:sticky;top:0;background:#fff;z-index:2}
-.logo{font-size:25px;font-weight:800}.tag{font-size:13px;color:#667085;margin-top:4px}
-main{padding:20px}.screen{display:none}.screen.active{display:block}.screen.auth-screen{display:none}.screen.auth-screen.active{display:flex}.auth-screen{min-height:70vh;align-items:center}.auth-card{border:1px solid #e3e8ef;border-radius:18px;padding:20px}.auth-card h1{margin-top:0}.auth-switch{background:#eef2f7;color:#172033}.account-info{font-size:13px;color:#667085;margin-top:8px}
-h1,h2{margin-top:8px}p{line-height:1.5;color:#475467}
-textarea,input,select{width:100%;padding:14px;border:1px solid #d7dde7;border-radius:12px;font-size:16px;margin:7px 0 14px;background:#fff}
-button{width:100%;padding:14px;border:0;border-radius:12px;background:#111827;color:#fff;font-size:16px;font-weight:700;margin:7px 0;cursor:pointer}
-button:disabled{opacity:.55;cursor:not-allowed}
-.secondary,.back{background:#eef2f7;color:#172033}.back{width:auto;padding:8px 12px}.success{background:#16834b}
-.card{border:1px solid #e3e8ef;border-radius:16px;padding:15px;margin:12px 0}
-.badge{display:inline-block;background:#e8f7ef;color:#147a46;padding:6px 10px;border-radius:20px;font-size:13px;font-weight:bold}
-.warn{background:#fff7e6;border-color:#f2d08a}.danger{background:#fff1f1;border-color:#efb0b0}
-.message{white-space:pre-wrap;background:#f7f9fc;border:1px solid #e3e8ef;border-radius:14px;padding:15px;line-height:1.55}
-.small{font-size:13px;color:#667085}.loading{text-align:center;padding:55px 10px}
-.spinner{width:42px;height:42px;border:4px solid #dfe6ee;border-top-color:#16834b;border-radius:50%;margin:auto auto 18px;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.timeline{border-left:3px solid #dbe3ec;padding-left:15px}.event{margin:0 0 18px}
-.progress{height:8px;background:#e9edf3;border-radius:8px;overflow:hidden}.bar{height:100%;width:20%;background:#16834b}
-.check{padding:9px 0}.choice{display:flex;gap:8px;flex-wrap:wrap}.choice button{width:auto;flex:1;min-width:140px}
-.rating{display:flex;gap:6px}.rating button{width:20%;font-size:20px;padding:10px 4px;margin:0}.rating button.selected{background:#16834b;color:#fff}
-.notice{padding:12px;border-radius:12px;background:#eef6ff;border:1px solid #c9def5;margin:10px 0}
-.label{font-weight:700;display:block;margin-top:8px}
-.hidden{display:none}.menu-btn{position:absolute;right:16px;top:14px;width:auto;margin:0;padding:8px 10px;background:#eef2f7;color:#172033;font-size:22px}.menu-panel{display:none;border-top:1px solid #e5e9f0;background:#fff;padding:8px 12px}.menu-panel.open{display:block}.menu-panel button{margin:4px 0;text-align:left;background:#fff;color:#172033;border:1px solid #e3e8ef}.case-item{width:100%;text-align:left;background:#fff;color:#172033;border:1px solid #e3e8ef;border-radius:14px;padding:14px;margin:8px 0}.case-item b{display:block}.case-item .small{margin-top:4px}.case-status{display:block;font-weight:700;margin-top:8px}.status-ok{color:#16834b}.status-no{color:#b42318}.status-wait{color:#9a6700}
-.password-wrap{position:relative;display:flex;align-items:center}.password-wrap input{padding-right:48px;width:100%;box-sizing:border-box}.eye-btn{position:absolute;right:4px;top:4px;width:40px!important;height:40px!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;font-size:19px!important;color:#172033!important}.auth-link{background:transparent!important;color:#1769aa!important;border:0!important;text-decoration:underline!important;padding:6px!important;margin-top:2px!important}
-</style>
-<script>
-function resolvaRenderMessage(text){return String(text==null?"":text).replace(/\r\n/g,"\n").replace(/\r/g,"\n").replace(/\\n/g,"\n").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");}
-</script>
-</head>
-<body>
-<div class="app">
-<header id="appHeader" style="display:none;position:sticky"><button class="menu-btn" onclick="toggleMenu()" aria-label="Abrir menu">☰</button><div class="logo">✓ RESOLVA</div><div class="tag">Você conta o problema. A gente mostra o caminho.</div></header>
-<nav id="menuPanel" class="menu-panel"><button onclick="irInicio()">🏠 Início</button><button onclick="meusCasos()">📂 Meus casos</button><button onclick="configuracoes()">⚙️ Configurações</button><button onclick="ajuda()">❓ Ajuda</button><button onclick="sairDoMenu()">🚪 Sair</button></nav>
-<main>
-<section id="login" class="screen active auth-screen"><div class="auth-card"><h1>✓ RESOLVA</h1><p>Entre na sua conta para utilizar o RESOLVA e acompanhar seus casos.</p><label class="label">E-mail</label><input id="loginEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com"><label class="label">Senha</label><div class="password-wrap"><input id="loginSenha" type="password" autocomplete="current-password" placeholder="Sua senha"><button type="button" class="eye-btn" onclick="alternarSenha('loginSenha',this)" aria-label="Mostrar senha">👁️</button></div><button class="auth-link" type="button" onclick="esqueciSenha()">ESQUECI MINHA SENHA</button><button onclick="entrar()">ENTRAR</button><button class="auth-switch" onclick="mostrarCadastro()">CRIAR MINHA CONTA</button><div id="loginMsg" class="small"></div></div></section>
-<section id="cadastro" class="screen auth-screen"><div class="auth-card"><button class="back" onclick="mostrarLogin()">← Voltar</button><h1>Criar conta</h1><p>Crie sua conta para utilizar o RESOLVA.</p><label class="label">E-mail</label><input id="cadEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com"><label class="label">Senha</label><div class="password-wrap"><input id="cadSenha" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha',this)" aria-label="Mostrar senha">👁️</button></div><label class="label">Confirmar senha</label><div class="password-wrap"><input id="cadSenha2" type="password" autocomplete="new-password" placeholder="Digite a senha novamente"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha2',this)" aria-label="Mostrar senha">👁️</button></div><button onclick="criarConta()">CRIAR CONTA</button><div id="cadMsg" class="small"></div></div></section>
-<section id="home" class="screen"><h1>Qual é o seu problema?</h1><p>Conte o que aconteceu. O RESOLVA vai entender a situação e mostrar o próximo caminho.</p><textarea id="problem" rows="5" placeholder="Ex.: Comprei um celular pela internet e ele chegou quebrado."></textarea><button onclick="analisar()">ENCONTRAR MEU CAMINHO</button><div class="card"><b>🔒 Funcionamento offline</b><p class="small">O fluxo principal desta versão funciona localmente no navegador.</p></div></section>
-<section id="ajuda" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>❓ Ajuda</h2><p>Como o RESOLVA funciona:</p><div class="card"><b>📝 1. Conte o problema</b><p>Descreva o que aconteceu.</p><b>🧭 2. Encontre seu caminho</b><p>O RESOLVA ajuda a identificar o próximo passo.</p><b>📂 3. Acompanhe em Meus Casos</b><p>Consulte o andamento e o histórico do caso.</p><b>💬 4. Registre as respostas</b><p>Informe quando a empresa responder e se o problema foi resolvido.</p></div></section>
-<section id="configuracoes" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>⚙️ Configurações</h2><p>Configurações do RESOLVA.</p><div class="card"><b>👤 Conta</b><p class="account-info" id="contaInfo"></p><button class="secondary" onclick="sair()">SAIR DA CONTA</button></div><div class="card"><b>🔒 Dados locais</b><p class="small">Nesta versão de teste, a conta e os casos ficam armazenados localmente neste navegador.</p></div></section>
-<section id="meusCasos" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>📂 Meus casos</h2><p>Veja os problemas já registrados e retome o caso que quiser.</p><div id="listaCasos"></div></section>
-<section id="loading" class="screen"><div class="loading"><div class="spinner"></div><h2>Analisando seu problema...</h2><p>✓ Problema recebido<br>✓ Natureza do problema analisada<br>● Organizando as informações<br>○ Preparando seu caminho</p></div></section>
-<section id="investigacao" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>🔎 Vamos entender melhor</h2><div id="perguntas"></div><button onclick="continuar()">CONTINUAR</button></section>
-<section id="caminho" class="screen"><button class="back" onclick="tela('investigacao')">← Voltar</button><span class="badge">✓ Seu caminho está pronto</span><h2 id="titulo"></h2><div class="card"><b>🧠 O que entendemos</b><p id="resumo"></p></div><div class="card"><b>🧭 O que fazer agora</b><p id="proximo"></p><p class="small">A mensagem é uma ferramenta para ajudar na tentativa de solução. O RESOLVA também acompanha o caso.</p></div><div id="caminhoUrgencia" class="card danger hidden"></div><div class="card"><b>📎 O que pode ser útil</b><p>📎 Comprovante</p><p>📸 Fotos e registros</p><p>💬 Conversas e protocolos</p><p>🔢 Número do pedido, se houver</p></div><button onclick="mensagem()">💬 PREPARAR MINHA MENSAGEM</button><button class="secondary" onclick="caso()">📍 ACOMPANHAR MEU CASO</button></section>
-<section id="mensagem" class="screen"><button id="voltarMensagem" class="back" onclick="voltarDaMensagem()">← Voltar</button><h2 id="tituloMensagem">💬 Sua mensagem está pronta</h2><div id="texto" class="message"></div><button onclick="copiar()">📋 COPIAR MENSAGEM</button><div class="card"><b>📌 O que fazer agora?</b><p>1. Copie a mensagem.</p><p>2. Envie pelo canal oficial.</p><p>3. Guarde a conversa ou print.</p><p>4. Guarde e registre o protocolo oficial.</p><p>5. Volte ao RESOLVA e registre a resposta.</p></div><button id="enviado" class="success" onclick="enviar()">✓ JÁ ENVIEI A MENSAGEM</button><button class="secondary" onclick="caso()">📍 ACOMPANHAR MEU CASO</button></section>
-<section id="caso" class="screen"><button class="back" onclick="tela('mensagem')">← Voltar</button><h2>📍 Meu caso</h2><div class="card"><b id="status">🟡 Aguardando resposta da empresa</b><p>Protocolo do RESOLVA: <b id="protocolo"></b></p><label class="label">🏢 Protocolo oficial da empresa</label><input id="protEmpresa" placeholder="Digite se a empresa forneceu"><button class="secondary" onclick="salvarProt()">SALVAR PROTOCOLO OFICIAL</button></div><div class="card"><b>⏳ Prazo de resposta da empresa</b><p class="small">Se a empresa informou uma data ou prazo para responder, registre aqui para o RESOLVA acompanhar.</p><label class="label" for="prazoResposta">📅 Resposta prevista até</label><input id="prazoResposta" type="date"><button class="secondary" onclick="salvarPrazo()">SALVAR PRAZO</button><div id="prazoInfo" class="small"></div></div><div class="progress"><div id="bar" class="bar"></div></div><div class="card"><b>🧭 O que fazer agora?</b><p id="proximoCaso">Aguarde a resposta da empresa e registre o retorno quando acontecer.</p></div><div id="linha" class="timeline"></div><h2>Como está o caso?</h2><button onclick="responder('aguardando')">🟡 Ainda não responderam</button><button class="success" onclick="responder('resolvido')">🟢 Responderam e resolveram</button><button onclick="responder('nao')">🔴 Responderam, mas não resolveram</button><button class="secondary" onclick="novo()">🔄 NOVO PROBLEMA</button></section>
-<section id="resposta" class="screen"><button class="back" onclick="tela('caso')">← Voltar</button><h2>💬 O que a empresa respondeu?</h2><p>Registre a resposta para organizar o próximo passo.</p><textarea id="respostaTexto" rows="6" placeholder="Cole ou escreva a resposta da empresa..."></textarea><label class="label">🏢 Protocolo oficial, se informado</label><input id="protResposta" placeholder="Número do protocolo"><button onclick="analisarResposta()">🧭 ANALISAR RESPOSTA</button></section>
-<section id="continua" class="screen"><button class="back" onclick="tela('resposta')">← Voltar</button><h2>🔄 Vamos continuar seu caso</h2><div class="card"><b>🔴 O problema ainda não foi resolvido.</b><p id="continuaTexto"></p></div><div class="card"><b>🧭 Próximo caminho</b><p>Agora podemos verificar um canal de defesa do consumidor ou outro órgão adequado ao tipo de problema.</p></div><button onclick="encaminhamento()">🏛️ VER PRÓXIMO CAMINHO</button><button class="secondary" onclick="mensagemNova()">💬 PREPARAR NOVA MENSAGEM</button><button class="secondary" onclick="caso()">📍 VOLTAR AO CASO</button></section>
-<section id="encaminhamento" class="screen"><button class="back" onclick="tela('continua')">← Voltar</button><span class="badge">🧭 Encaminhamento inteligente</span><h2>🔴 O problema continua sem solução</h2><p>O RESOLVA analisou o caso e apresenta um próximo caminho. A indicação é orientativa e deve usar o canal oficial correspondente.</p><div class="card"><h2>🏛️ Caminho recomendado</h2><h3 id="orgao"></h3><p id="motivo"></p></div><div id="urgencia" class="card danger hidden"></div><div class="card"><h3>📍 Como acessar</h3><p id="acesso"></p><p class="small">O RESOLVA não inventa números ou endereços: canais oficiais devem ser conferidos antes do uso.</p></div><div class="card"><h3>📄 Prepare antes de procurar ajuda</h3><div class="check">☐ CPF e dados necessários, se exigidos</div><div class="check">☐ Nota fiscal, se houver</div><div class="check">☐ Comprovante de pagamento</div><div class="check">☐ Contrato ou pedido, se houver</div><div class="check">☐ Conversas com a empresa</div><div class="check">☐ Protocolo da empresa</div><div class="check">☐ Resposta recebida</div></div><div class="card"><h3>📋 O que você já tem no RESOLVA</h3><p>✅ Problema registrado</p><p>✅ Histórico do atendimento</p><p>✅ Protocolo do RESOLVA: <b id="encProt"></b></p><p>⚠️ Confira se o protocolo oficial da empresa e os comprovantes estão guardados.</p></div><button id="btnCanal" onclick="abrirCanal()">🌐 ACESSAR CANAL OFICIAL</button><button class="secondary" onclick="caso()">📍 CONTINUAR MEU CASO</button><div class="card warn"><h3>⚠️ Antes de avançar</h3><p>O canal escolhido pode exigir cadastro e documentos. O RESOLVA não substitui orientação jurídica nem decide o direito do consumidor; ele organiza informações e aponta caminhos.</p></div><div class="card"><h3>🔄 E se ainda não resolver?</h3><p>O RESOLVA poderá registrar o novo resultado e indicar uma próxima etapa, que pode envolver outro órgão ou assistência jurídica, conforme o caso.</p></div><button class="secondary" onclick="novo()">🔄 NOVO PROBLEMA</button></section>
-<section id="resolvido" class="screen"><button class="back" onclick="tela('caso')">← Voltar</button><h2>🎉 Problema resolvido!</h2><p>O caso foi marcado como resolvido.</p><div class="card"><b>⭐ O RESOLVA ajudou você?</b><div id="estrelas" class="rating"></div><p id="notaTexto" class="small">Escolha uma nota para registrar sua avaliação.</p></div><button id="salvarAvaliacao" class="success" onclick="salvar()" disabled>SALVAR AVALIAÇÃO</button><button class="secondary" onclick="novo()">🔄 NOVO PROBLEMA</button></section>
-</main></div>
-<script>
-const s={problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,origemMensagem:"caminho",canalUrl:"",casos:[]};
-const CATEGORIAS=["Compra / Loja","Telefone / Internet","Banco / Cartão","Cobranças / Pagamentos","Entregas","Transportes","Veículos","Viagens","Casa / Serviços","Energia / Água / Gás","Saúde","Serviços Públicos","Educação","Trabalho / Serviços profissionais","Contratos / Serviços","Outro"];
-function contaAtual(){try{return JSON.parse(localStorage.getItem("resolva_conta_v1")||"null")}catch(e){return null}}
-function sessaoAtiva(){try{return localStorage.getItem("resolva_sessao_v1")==="1"&&localStorage.getItem("resolva_logout_v1")!=="1"}catch(e){return false}}
-function normalizarEmail(v){return String(v||"").trim().toLowerCase()}
-function mostrarLogin(msg){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById("login").classList.add("active");document.getElementById("appHeader").style.display="none";document.getElementById("menuPanel").classList.remove("open");if(msg)document.getElementById("loginMsg").textContent=msg;scrollTo(0,0)}
-function mostrarCadastro(){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById("cadastro").classList.add("active");document.getElementById("appHeader").style.display="none";document.getElementById("menuPanel").classList.remove("open");document.getElementById("cadMsg").textContent="";scrollTo(0,0)}
-function alternarSenha(id,btn){const el=document.getElementById(id);if(!el)return;const mostrar=el.type==="password";el.type=mostrar?"text":"password";btn.textContent=mostrar?"🙈":"👁️"}
-function esqueciSenha(){const email=normalizarEmail(document.getElementById("loginEmail").value),conta=contaAtual();if(!conta){document.getElementById("loginMsg").textContent="Nenhuma conta foi encontrada neste navegador.";return}if(email&&email!==conta.email){document.getElementById("loginMsg").textContent="Esse e-mail não corresponde à conta deste navegador.";return}document.getElementById("loginMsg").textContent="Nesta versão de teste, a recuperação de senha ainda é local. Na versão com servidor, enviaremos um link de recuperação para o e-mail cadastrado."}
-function criarConta(){const email=normalizarEmail(document.getElementById("cadEmail").value),senha=document.getElementById("cadSenha").value,senha2=document.getElementById("cadSenha2").value,msg=document.getElementById("cadMsg");if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent="Informe um e-mail válido.";return}if(senha.length<6){msg.textContent="A senha precisa ter pelo menos 6 caracteres.";return}if(senha!==senha2){msg.textContent="As senhas não conferem.";return}if(contaAtual()){msg.textContent="Já existe uma conta neste navegador. Entre com ela ou saia dela antes de criar outra.";return}try{localStorage.setItem("resolva_conta_v1",JSON.stringify({email,senha}));localStorage.setItem("resolva_sessao_v1","1");localStorage.removeItem("resolva_logout_v1");abrirApp()}catch(e){msg.textContent="Não foi possível salvar a conta neste navegador."}}
-function entrar(){const email=normalizarEmail(document.getElementById("loginEmail").value),senha=document.getElementById("loginSenha").value,conta=contaAtual(),msg=document.getElementById("loginMsg");if(!conta){msg.textContent="Você ainda não criou uma conta neste navegador.";return}if(email!==conta.email||senha!==conta.senha){msg.textContent="E-mail ou senha incorretos.";return}localStorage.setItem("resolva_sessao_v1","1");localStorage.removeItem("resolva_logout_v1");abrirApp()}
-function abrirApp(){document.getElementById("appHeader").style.display="block";document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById("home").classList.add("active");const c=contaAtual();if(document.getElementById("contaInfo"))document.getElementById("contaInfo").textContent=c?c.email:"";scrollTo(0,0)}
-function sair(){try{localStorage.setItem("resolva_sessao_v1","0");localStorage.setItem("resolva_logout_v1","1")}catch(e){}document.getElementById("appHeader").style.display="none";document.getElementById("menuPanel").classList.remove("open");mostrarLogin("Você saiu da sua conta. Entre novamente para continuar.")}
-function exigirLogin(){if(sessaoAtiva()&&contaAtual()){abrirApp();return true}mostrarLogin();return false}
-function tela(id){if(!sessaoAtiva()&&id!=="login"&&id!=="cadastro"){mostrarLogin();return}document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");scrollTo(0,0);salvarLocal()}
-function data(){return new Date().toLocaleDateString("pt-BR")}
-function registrarEvento(texto){const hoje=data();if(!Array.isArray(s.eventos))s.eventos=[];if(!s.eventos.some(e=>e&&e[0]===texto&&e[1]===hoje))s.eventos.push([texto,hoje])}
-function normal(t){return(t||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
-function salvarLocal(){try{const dados={...s};delete dados.casos;localStorage.setItem("resolva_2_0",JSON.stringify(dados));if(s.protocolo){const idx=s.casos.findIndex(c=>c.protocolo===s.protocolo);if(idx>=0)s.casos[idx]=JSON.parse(JSON.stringify(dados));else s.casos.push(JSON.parse(JSON.stringify(dados)));localStorage.setItem("resolva_2_0_casos",JSON.stringify(s.casos))}}catch(e){}}
-function limparEventosDuplicados(c){if(!c||!Array.isArray(c.eventos))return c;const vistos=new Set();c.eventos=c.eventos.filter(e=>{const chave=String(e&&e[0]||"")+"|"+String(e&&e[1]||"");if(vistos.has(chave))return false;vistos.add(chave);return true});return c}
-function carregarLocal(){try{const x=localStorage.getItem("resolva_2_0");if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));const cs=localStorage.getItem("resolva_2_0_casos");if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados)}catch(e){}}
-function ajuda(){fecharMenu();tela("ajuda")}function sairDoMenu(){fecharMenu();sair()}function toggleMenu(){document.getElementById("menuPanel").classList.toggle("open")}function fecharMenu(){document.getElementById("menuPanel").classList.remove("open")}function irInicio(){fecharMenu();tela("home")}
-function statusCaso(c){if(c.status==="resolvido")return{texto:"🟢 Problema resolvido",classe:"status-ok",proximo:"Caso encerrado. Você não precisa fazer mais nada agora."};if(c.status==="nao")return{texto:"🔴 Problema não resolvido",classe:"status-no",proximo:"O problema continua. Verifique o próximo caminho ou prepare uma nova mensagem."};if(c.prazoResposta){const d=diasAtePrazo(c.prazoResposta);if(d<0)return{texto:"🔴 Prazo de resposta encerrado",classe:"status-no",proximo:"O prazo informado terminou sem resposta. Verifique o próximo caminho para continuar o caso."}}return{texto:"🟡 Aguardando resposta da empresa",classe:"status-wait",proximo:"Aguarde a resposta da empresa e registre o retorno quando acontecer."}}
-function ultimaAtualizacao(c){return c.eventos&&c.eventos.length?c.eventos[c.eventos.length-1][1]:"—"}
-function meusCasos(){fecharMenu();const lista=document.getElementById("listaCasos"),casos=[...s.casos];if(s.problema&&s.protocolo&&!casos.some(c=>c.protocolo===s.protocolo))casos.push({...s});if(!casos.length)lista.innerHTML="<div class=\"card\"><b>Você ainda não tem casos registrados.</b><p>Quando iniciar um caso, ele aparecerá aqui.</p></div>";else{const ordenados=casos.slice().reverse();lista.innerHTML=ordenados.map((c,i)=>{const st=statusCaso(c);return`<button class="case-item" onclick="abrirCaso(${i})"><b>${esc(c.problema||"Caso sem descrição")}</b><span class="case-status ${st.classe}">${st.texto}</span><span class="small">🏢 ${esc(c.empresa||"Empresa não informada")}</span><span class="small">📋 ${esc(c.protocolo||"Sem protocolo")} • 📅 Última atualização: ${esc(ultimaAtualizacao(c))}</span></button>`}).join("");window._listaCasos=ordenados}tela("meusCasos")}
-function abrirCaso(i){const c=window._listaCasos[i];if(!c)return;Object.assign(s,JSON.parse(JSON.stringify(c)));salvarLocal();caso()}
-function esc(x){return String(x||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+name: Gerar APK RESOLVA
 
-/* CORREÇÃO V2.0.5:
-   A natureza do defeito/funcionamento do produto comprado é priorizada
-   antes de palavras amplas como "internet" ou "telefone/celular".
-   Assim, ventilador que chegou funcionando e depois apresentou defeito
-   deve permanecer em Compra / Loja. */
-function detectar(t){
- const x=normal(t);
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
- if(/(compra.*nao.*reconhec|transacao.*nao.*reconhec|cartao.*clonad|pix.*nao.*reconhec|movimentacao.*nao.*reconhec)/.test(x)
-   || (/(cartao|banco|pix|conta banc)/.test(x)&&/(nao fui eu|nao reconheco)/.test(x))) return "Banco / Cartão";
+jobs:
+  build:
+    name: Compilar RESOLVA 2.0.4
+    runs-on: ubuntu-latest
 
- if(/(onibus|autocarro|passagem.*onibus|passagem.*rodoviaria|rodoviaria|metro|trem|taxi|uber|99|corrida.*taxi|motorista|transporte|viagem.*cancelad)/.test(x)) return "Transportes";
- if(/(energia eletrica|conta de energia|luz|distribuidora de energia|eletricidade|agua.*conta|conta de agua|gas.*encanado|fornecimento de energia)/.test(x)) return "Energia / Água / Gás";
- if(/(consulta|clinica|hospital|medico|medica|dentista|odontolog|exame|laboratorio|plano de saude|saude)/.test(x)) return "Saúde";
- if(/(escola|faculdade|universidade|curso|mensalidade.*curso|professor|aluno|matricula|instituicao de ensino|ensino)/.test(x)) return "Educação";
- if(/(prefeitura|governo|orgao publico|documento publico|documento.*orgao|certidao|carteira.*identidade|servico publico|taxa.*orgao|atendimento.*orgao)/.test(x)) return "Serviços Públicos";
- if(/(contratei.*(pessoa|alguem|prestador|profissional).*servico|contratei.*servico.*(pessoa|alguem|prestador|profissional)|paguei.*(pessoa|alguem).*para.*(instalar|instalacao|consertar|reparar|montar|manutencao).*na.*(casa|residencia)|recebeu.*dinheiro.*nao.*(apareceu|compareceu).*devolver|pag(uei|amento).*antecipad.*(instalacao|instalar|conserto|reparo|servico).*nao.*realiz|pag(uei|amento).*antecipad.*(servico|trabalho).*nao.*(realizou|fez|prestou)|nao.*realizou.*servico.*nao.*quer.*devolver|servico.*nao.*realizado.*reembolso|profissional.*servico|prestador autonomo|freelancer|eletricista|pedreiro|pintor|marceneiro|tecnico.*servico|servico.*profissional)/.test(x)) return "Trabalho / Serviços profissionais";
+    steps:
+      - name: Baixar código do projeto
+        uses: actions/checkout@v4
 
- if(/(nao.*chegou|nao.*recebi|nao.*entregue|prazo.*entrega|prazo.*venceu|atrasad.*entrega|entrega.*atrasad)/.test(x)) return "Entregas";
- if(/(entrega|encomenda|transportadora|entregue.*nao.*recebi)/.test(x)) return "Entregas";
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
- /* Regra nova: defeito, dano ou mau funcionamento de produto/mercadoria
-    comprado, inclusive após alguns dias e mesmo se "internet" aparecer. */
- if(/(comprei|compra|produto|mercadoria|loja|vendedor|pedido)/.test(x) &&
-    /(defeit|quebrad|danificad|avariad|nao funciona|nao.*funcion|deslig.*sozinh|parou.*funcion|funcion.*e.*depois|chegou.*funcionando.*depois|veio.*problema|chegou.*problema|apresentou.*problema|apresentou.*defeito|nao.*quer.*troca|recusa.*troca)/.test(x)) return "Compra / Loja";
+      - name: Criar projeto Android
+        shell: bash
+        run: |
+          mkdir -p app/src/main/java/com/resolva/app
+          mkdir -p app/src/main/assets
 
- if(/(internet|wifi|wi-fi|operadora|chip|linha telefonica|telefone|celular.*operadora|dados moveis)/.test(x)) return "Telefone / Internet";
- if(/(pix|banco|cartao|saque|transferencia|conta bancaria|tarifa bancaria|financiamento|credito bancario)/.test(x)) return "Banco / Cartão";
- if(/(carro|veiculo|oficina|mecanico|moto|automovel)/.test(x)) return "Veículos";
- if(/(voo|aviao|bagagem|hotel|reserva.*hotel|companhia aerea)/.test(x)) return "Viagens";
- if(/(casa|instalacao|assistencia tecnica|conserto|servico residencial)/.test(x)) return "Casa / Serviços";
- if(/(cobranca|cobrando|cobrado|cobraram|continua.*cobran|continuam.*cobran|cobranca.*cancel|cobrado.*cancel|cobraram.*cancel)/.test(x)) return "Cobranças / Pagamentos";
- if(/(contrato|cancelamento|renovacao|clausula)/.test(x)) return "Contratos / Serviços";
- if(/(divida|pagamento|cobrado|cobraram)/.test(x)) return "Cobranças / Pagamentos";
- if(/(comprei|compra|produto|loja|vendedor|mercadoria)/.test(x)) return "Compra / Loja";
- return "Outro";
-}
+          cp RESOLVA_2.0.4.html app/src/main/assets/index.html
 
-function analisar(){s.problema=document.getElementById("problem").value.trim();if(!s.problema){alert("Conte primeiro o que aconteceu.");return}s.urgente=/(nao reconheco|compra.*nao reconhecida|cartao.*clonado|pix.*nao reconhecido)/i.test(s.problema);tela("loading");setTimeout(()=>{montar();tela("investigacao")},500)}
-function montar(){if(!s.categoriaManual)s.categoria=detectar(s.problema);let prestadorHtml="";if(s.categoria==="Trabalho / Serviços profissionais")prestadorHtml='<label class="label">👤 Quem prestou o serviço?</label><select id="prestador"><option>Empresa</option><option>Profissional autônomo</option><option>Não tenho certeza</option></select>';document.getElementById("perguntas").innerHTML='<div class="card"><b>Categoria sugerida</b><p>'+esc(s.categoria)+'</p><p class="small">A classificação prioriza a natureza do problema antes de palavras amplas como internet, pagamento ou cobrança.</p>'+(s.urgente&&s.categoria==="Banco / Cartão"?'<div class="notice"><b>🚨 Atenção</b><p>Esta situação pode envolver uma transação não reconhecida. Priorize o banco ou emissor do cartão e a segurança da conta/cartão.</p></div>':'')+'<button class="secondary" onclick="corrigirCategoria()">⚙️ Categoria incorreta?</button></div>'+prestadorHtml+'<label class="label">🏪 Empresa ou loja</label><input id="empresa" value="'+esc(s.empresa)+'" placeholder="Digite o nome, se souber"><label class="label">🎯 Objetivo</label><select id="objetivo"><option>Resolver o problema</option><option>Trocar o produto</option><option>Solicitar reparo</option><option>Solicitar reembolso</option><option>Contestar uma cobrança</option><option>Obter resposta da empresa</option></select><label class="label">📎 Tem comprovante, fotos ou conversa?</label><select id="comprovante"><option>Sim</option><option>Não</option><option>Não tenho certeza</option></select><label class="label">💬 Já entrou em contato?</label><select id="contato"><option>Não</option><option>Sim, ainda sem solução</option><option>Sim, foi resolvido</option></select>'}
-function corrigirCategoria(){const atual=s.categoria,op=CATEGORIAS.map(c=>'<option '+(c===atual?'selected':'')+'>'+esc(c)+'</option>').join("");document.getElementById("perguntas").insertAdjacentHTML("afterbegin",'<div class="notice"><b>Confira a categoria</b><select id="categoriaManual">'+op+'</select><button class="secondary" onclick="aplicarCategoria()">APLICAR CATEGORIA</button></div>')}
-function aplicarCategoria(){s.categoria=document.getElementById("categoriaManual").value;s.categoriaManual=true;salvarLocal();montar()}
-function continuar(){s.empresa=document.getElementById("empresa").value.trim()||"Não informada";s.objetivo=document.getElementById("objetivo").value;s.comprovante=document.getElementById("comprovante").value;s.contato=document.getElementById("contato").value;if(document.getElementById("prestador"))s.prestador=document.getElementById("prestador").value;if(!s.protocolo)s.protocolo="RV-"+Math.floor(100000+Math.random()*900000);if(!s.eventos.length)s.eventos=[["Problema registrado",data()]];document.getElementById("titulo").textContent=s.categoria+" • "+s.objetivo;document.getElementById("resumo").textContent=s.problema;const cu=document.getElementById("caminhoUrgencia");if(s.urgente&&s.categoria==="Banco / Cartão"){cu.classList.remove("hidden");cu.innerHTML="<h3>🚨 Atenção</h3><p>Esta situação pode envolver uma transação não reconhecida. <b>Priorize imediatamente o banco ou emissor do cartão</b>.</p>";document.getElementById("proximo").textContent="Priorizar imediatamente o banco ou emissor do cartão, proteger a conta/cartão e contestar a transação."}else{cu.classList.add("hidden");cu.innerHTML="";document.getElementById("proximo").textContent=s.contato==="Não"?"Registrar o pedido de solução e solicitar o protocolo oficial.":"Registrar a resposta/atendimento anterior e definir o próximo passo."}tela("caminho")}
-function montarMensagem(nova){const temEmpresa=s.empresa&&s.empresa!=="Não informada",saudacao=temEmpresa?"Olá, "+s.empresa+".":"Olá,";let t=saudacao+"\n\n";if(nova)t+="Estou entrando em contato novamente porque o problema ainda não foi resolvido:\n"+s.problema+"\n\nA empresa respondeu:\n"+(s.resposta||"A empresa respondeu, mas o problema não foi solucionado.")+"\n\n"+(s.protEmpresa?"Protocolo oficial informado: "+s.protEmpresa+".\n\n":"");else t+="Estou entrando em contato porque preciso resolver o seguinte problema:\n"+s.problema+"\n\n";t+="Meu objetivo é: "+s.objetivo+".\n\n"+(nova&&s.protEmpresa?"Solicito o registro desta nova manifestação no protocolo já informado e o prazo para solução.\n\n":"Solicito o registro desta solicitação, o número de protocolo e o prazo para solução.\n\n")+"Obrigado(a).";return t}
-function mensagem(){s.origemMensagem="caminho";document.getElementById("tituloMensagem").textContent="💬 Sua mensagem está pronta";document.getElementById("texto").textContent=montarMensagem(false);tela("mensagem")}
-function mensagemNova(){s.origemMensagem="continua";document.getElementById("tituloMensagem").textContent="💬 Sua nova mensagem está pronta";document.getElementById("texto").textContent=montarMensagem(true);tela("mensagem")}
-function voltarDaMensagem(){tela(s.origemMensagem==="continua"?"continua":"caminho")}
-async function copiar(){const texto=document.getElementById("texto").textContent||"";if(!texto){alert("Não há mensagem para copiar.");return}try{await navigator.clipboard.writeText(texto);alert("Mensagem copiada.")}catch(e){const area=document.createElement("textarea");area.value=texto;document.body.appendChild(area);area.select();try{document.execCommand("copy");alert("Mensagem copiada.")}catch(err){alert("Não foi possível copiar automaticamente. Selecione e copie a mensagem.")}area.remove()}}
-function enviar(){registrarEvento("Mensagem enviada");s.status="aguardando";salvarLocal();caso()}
-function caso(){document.getElementById("protocolo").textContent=s.protocolo||"—";document.getElementById("protEmpresa").value=s.protEmpresa||"";document.getElementById("prazoResposta").value=s.prazoResposta||"";atualizarPrazo();const st=statusCaso(s);document.getElementById("status").textContent=st.texto;document.getElementById("proximoCaso").textContent=st.proximo;document.getElementById("bar").style.width=s.status==="resolvido"?"100%":s.status==="nao"?"65%":"20%";linha();tela("caso")}
-function salvarProt(){s.protEmpresa=document.getElementById("protEmpresa").value.trim();if(!s.protEmpresa){alert("Digite o protocolo oficial.");return}registrarEvento("Protocolo oficial da empresa registrado");linha();salvarLocal();alert("Protocolo oficial registrado.")}
-function formatarDataISO(iso){if(!iso)return"—";const p=iso.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:iso}
-function diasAtePrazo(iso){if(!iso)return null;const agora=new Date();agora.setHours(0,0,0,0);const p=iso.split("-");if(p.length!==3)return null;const alvo=new Date(Number(p[0]),Number(p[1])-1,Number(p[2]));alvo.setHours(0,0,0,0);return Math.round((alvo-agora)/86400000)}
-function atualizarPrazo(){const el=document.getElementById("prazoInfo");if(!el)return;const iso=s.prazoResposta||"";if(!iso){el.textContent="Nenhum prazo registrado.";return}const d=diasAtePrazo(iso);if(d>0)el.textContent="📅 Resposta prevista até "+formatarDataISO(iso)+" • ⏳ Faltam "+d+" dias.";else if(d===0)el.textContent="📅 Resposta prevista até "+formatarDataISO(iso)+" • ⏳ O prazo termina hoje.";else el.textContent="📅 Prazo terminou em "+formatarDataISO(iso)+" • ⚠️ A empresa não respondeu dentro do prazo informado."}
-function salvarPrazo(){const valor=document.getElementById("prazoResposta").value;if(!valor){alert("Escolha a data prevista para a resposta da empresa.");return}s.prazoResposta=valor;registrarEvento("Prazo de resposta registrado: "+formatarDataISO(valor));salvarLocal();atualizarPrazo();caso()}
-function linha(){document.getElementById("linha").innerHTML=s.eventos.map(e=>'<div class="event"><b>✓ '+esc(e[0])+"</b><div class='small'>"+esc(e[1])+"</div></div>").join("")}
-function responder(t){if(t==="aguardando"){s.status="aguardando";registrarEvento("Usuário informou que ainda aguarda resposta");linha();salvarLocal();caso();alert("Caso mantido como aguardando resposta.");return}if(t==="resolvido"){s.status="resolvido";registrarEvento("Empresa respondeu e problema foi resolvido");estrelas();salvarLocal();tela("resolvido");return}s.status="nao";document.getElementById("respostaTexto").value="";document.getElementById("protResposta").value=s.protEmpresa||"";salvarLocal();tela("resposta")}
-function analisarResposta(){s.resposta=document.getElementById("respostaTexto").value.trim();if(!s.resposta){alert("Registre a resposta da empresa.");return}s.protEmpresa=document.getElementById("protResposta").value.trim()||s.protEmpresa;registrarEvento("Resposta da empresa registrada");registrarEvento("Empresa respondeu, mas problema não foi resolvido");document.getElementById("continuaTexto").textContent="A resposta foi registrada e o histórico do caso foi mantido. O próximo passo é continuar a resolução.";salvarLocal();tela("continua")}
-function rota(){const c=s.categoria,x=normal(s.problema);if(s.urgente&&c==="Banco / Cartão")return{orgao:"Banco/emissor do cartão + Banco Central, conforme o caso",motivo:"A situação pode envolver uma transação não reconhecida. O primeiro passo é agir rapidamente com o banco ou emissor.",acesso:"Primeiro conteste a operação com o banco ou emissor e registre o protocolo.",urgente:true,url:"https://www.bcb.gov.br/meubc/registrar_reclamacao"};if(c==="Telefone / Internet")return{orgao:"Anatel / Anatel Consumidor",motivo:"Para problemas de telecomunicações, há canal específico da Anatel.",acesso:"Pela internet ou aplicativo oficial da Anatel, conforme disponibilidade.",url:"https://apps.anatel.gov.br/AnatelConsumidor/"};if(c==="Energia / Água / Gás"&&/energia|luz|eletricidade/.test(x))return{orgao:"Distribuidora / ANEEL, conforme a etapa do atendimento",motivo:"Para energia elétrica, o caminho é primeiro a distribuidora e sua ouvidoria; se persistir, a ANEEL possui canal oficial.",acesso:"Primeiro fale com a distribuidora e, se necessário, com a ouvidoria e a ANEEL.",url:"https://www.gov.br/pt-br/servicos/registrar-reclamacao-sobre-demanda-junto-a-distribuidora-de-energia-eletrica-ANEEL"};if(c==="Serviços Públicos")return{orgao:"Ouvidoria / canal oficial do órgão responsável",motivo:"O canal correto depende do órgão e da esfera de governo.",acesso:"Informe o órgão responsável e use a ouvidoria ou canal oficial correspondente.",url:""};if(c==="Banco / Cartão")return{orgao:"Consumidor.gov.br / Banco Central, conforme o caso",motivo:"Problemas bancários podem ter caminhos diferentes.",acesso:"Confira o canal oficial correspondente e guarde o protocolo do banco.",url:"https://www.gov.br/pt-br/servicos/reclamar-contra-servico-ou-produto-de-empresas-privadas"};if(c==="Trabalho / Serviços profissionais"&&s.prestador==="Profissional autônomo")return{orgao:"Procon ou assistência jurídica, conforme o caso",motivo:"Quando o prestador é profissional autônomo/pessoa física, o Consumidor.gov.br pode não ser aplicável.",acesso:"Procure o Procon competente ou assistência jurídica adequada.",url:""};return{orgao:"Consumidor.gov.br",motivo:"Para problemas de consumo, o Consumidor.gov.br permite registrar reclamações contra empresas participantes.",acesso:"Pela internet ou aplicativo oficial, quando disponível.",url:"https://www.gov.br/pt-br/servicos/reclamar-contra-servico-ou-produto-de-empresas-privadas"}}
-function encaminhamento(){const r=rota();document.getElementById("encProt").textContent=s.protocolo||"—";document.getElementById("orgao").textContent=r.orgao;document.getElementById("motivo").textContent=r.motivo;document.getElementById("acesso").textContent=r.acesso;const u=document.getElementById("urgencia");if(r.urgente){u.classList.remove("hidden");u.innerHTML="<h3>🚨 Atenção</h3><p>Priorize o banco/emissor, proteção do cartão/conta e contestação da operação.</p>"}else{u.classList.add("hidden");u.innerHTML=""}s.canalUrl=r.url||"";const b=document.getElementById("btnCanal");if(r.url){b.disabled=false;b.textContent="🌐 ACESSAR CANAL OFICIAL"}else{b.disabled=true;b.textContent="🌐 CANAL OFICIAL NÃO CONFIGURADO"}salvarLocal();tela("encaminhamento")}
-function abrirCanal(){const r=rota();if(r.url)window.open(r.url,"_blank");else alert("O RESOLVA não encontrou um endereço oficial específico nesta versão.")}
-function estrelas(){const el=document.getElementById("estrelas");el.innerHTML=[1,2,3,4,5].map(n=>'<button id="star'+n+'" aria-label="'+n+' estrelas" onclick="selecionarNota('+n+')">'+n+"★</button>").join("");document.getElementById("salvarAvaliacao").disabled=true}
-function selecionarNota(n){s.nota=n;[1,2,3,4,5].forEach(i=>document.getElementById("star"+i).classList.toggle("selected",i===n));document.getElementById("notaTexto").textContent="Avaliação selecionada: "+n+" estrela"+(n>1?"s":"")+"★";document.getElementById("salvarAvaliacao").disabled=false;salvarLocal()}
-function salvar(){if(!s.nota){alert("Escolha uma nota antes de salvar.");return}s.eventos.push(["Avaliação registrada: "+s.nota+" estrela"+(s.nota>1?"s":""),data()]);salvarLocal();alert("Avaliação registrada. Obrigado!");novo()}
-function novo(){Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,canalUrl:""});try{localStorage.removeItem("resolva_2_0")}catch(e){}document.getElementById("problem").value="";tela("home")}
-function configuracoes(){tela("configuracoes")}
-carregarLocal();if(!Array.isArray(s.casos))s.casos=[];if(s.problema&&s.protocolo&&!s.casos.some(c=>c.protocolo===s.protocolo)){const d={...s};delete d.casos;s.casos.push(d);try{localStorage.setItem("resolva_2_0_casos",JSON.stringify(s.casos))}catch(e){}}if(s.problema)document.getElementById("problem").value=s.problema;try{if(localStorage.getItem("resolva_logout_v1")==="1")mostrarLogin();else exigirLogin()}catch(e){exigirLogin()}
-</script>
-</body>
-</html>
+          cat > settings.gradle <<'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+
+          rootProject.name = "RESOLVA"
+          include(":app")
+          EOF
+
+          cat > build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application' version '8.6.1' apply false
+          }
+          EOF
+
+          cat > gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          EOF
+
+          cat > app/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'com.resolva.app'
+              compileSdk 35
+
+              defaultConfig {
+                  applicationId 'com.resolva.app'
+                  minSdk 23
+                  targetSdk 35
+                  versionCode 204
+                  versionName '2.0.4'
+              }
+
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          EOF
+
+          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET" />
+
+              <application
+                  android:allowBackup="true"
+                  android:label="RESOLVA"
+                  android:theme="@android:style/Theme.Material.Light.NoActionBar"
+                  android:usesCleartextTraffic="true">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:screenOrientation="portrait"
+                      android:exported="true">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+
+                  </activity>
+
+              </application>
+
+          </manifest>
+          EOF
+
+          cat > app/src/main/java/com/resolva/app/MainActivity.java <<'EOF'
+          package com.resolva.app;
+
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          public class MainActivity extends Activity {
+
+              private WebView webView;
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+
+                  webView = new WebView(this);
+                  setContentView(webView);
+
+                  WebSettings settings = webView.getSettings();
+                  settings.setJavaScriptEnabled(true);
+                  settings.setDomStorageEnabled(true);
+                  settings.setDatabaseEnabled(true);
+                  settings.setAllowFileAccess(true);
+                  settings.setAllowContentAccess(true);
+
+                  webView.setWebViewClient(new WebViewClient());
+                  webView.loadUrl("file:///android_asset/index.html");
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+          }
+          EOF
+
+      - name: Preparar Gradle
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -q gradle-8.7-bin.zip
+          mv gradle-8.7 /tmp/gradle
+
+      - name: Gerar APK
+        run: |
+          /tmp/gradle/bin/gradle assembleDebug --no-daemon
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: RESOLVA-Android-2.0.4
+          path: app/build/outputs/apk/debug/app-debug.apk
