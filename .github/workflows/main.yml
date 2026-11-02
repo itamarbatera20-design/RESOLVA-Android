@@ -28,6 +28,16 @@ jobs:
           mkdir -p app/src/main/assets
           cp brand-resolva.svg app/src/main/assets/brand-resolva.svg
 
+          # Gerar os ícones oficiais do Android a partir da marca RESOLVA
+          python3 -m pip install --quiet cairosvg
+          for spec in "mdpi:48" "hdpi:72" "xhdpi:96" "xxhdpi:144" "xxxhdpi:192"; do
+            density="${spec%%:*}"
+            pixels="${spec##*:}"
+            mkdir -p "app/src/main/res/mipmap-${density}"
+            python3 -c "import cairosvg; cairosvg.svg2png(url='brand-resolva.svg', write_to='app/src/main/res/mipmap-${density}/ic_launcher.png', output_width=${pixels}, output_height=${pixels})"
+            cp "app/src/main/res/mipmap-${density}/ic_launcher.png" "app/src/main/res/mipmap-${density}/ic_launcher_round.png"
+          done
+
           cp RESOLVA_2.0.4.html app/src/main/assets/index.html
 
           cat > settings.gradle <<'EOF'
@@ -94,6 +104,8 @@ jobs:
               <application
                   android:allowBackup="true"
                   android:label="RESOLVA"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher_round"
                   android:theme="@android:style/Theme.Material.Light.NoActionBar"
                   android:usesCleartextTraffic="true">
 
