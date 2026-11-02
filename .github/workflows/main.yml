@@ -26,6 +26,7 @@ jobs:
         run: |
           mkdir -p app/src/main/java/com/resolva/app
           mkdir -p app/src/main/assets
+          cp brand-resolva.svg app/src/main/assets/brand-resolva.svg
 
           cp RESOLVA_2.0.4.html app/src/main/assets/index.html
 
