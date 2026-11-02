@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Compilar RESOLVA 2.0.4
+    name: Compilar RESOLVA 2.4.0
     runs-on: ubuntu-latest
 
     steps:
@@ -74,8 +74,8 @@ jobs:
                   applicationId 'com.resolva.app'
                   minSdk 23
                   targetSdk 35
-                  versionCode 204
-                  versionName '2.0.4'
+                  versionCode 240
+                  versionName '2.4.0'
               }
 
               compileOptions {
@@ -168,5 +168,5 @@ jobs:
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
-          name: RESOLVA-Android-2.0.4
+          name: RESOLVA-Android-2.4.0
           path: app/build/outputs/apk/debug/app-debug.apk

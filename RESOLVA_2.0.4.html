@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RESOLVA 2.0.4</title>
+<title>RESOLVA 2.4.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f3f6fa;color:#172033;font-family:Arial,sans-serif}
@@ -31,7 +31,36 @@ button:disabled{opacity:.55;cursor:not-allowed}
 .notice{padding:12px;border-radius:12px;background:#eef6ff;border:1px solid #c9def5;margin:10px 0}
 .label{font-weight:700;display:block;margin-top:8px}
 .hidden{display:none}.menu-btn{position:absolute;right:16px;top:14px;width:auto;margin:0;padding:8px 10px;background:#eef2f7;color:#172033;font-size:22px}.menu-panel{display:none;border-top:1px solid #e5e9f0;background:#fff;padding:8px 12px}.menu-panel.open{display:block}.menu-panel button{margin:4px 0;text-align:left;background:#fff;color:#172033;border:1px solid #e3e8ef}.case-item{width:100%;text-align:left;background:#fff;color:#172033;border:1px solid #e3e8ef;border-radius:14px;padding:14px;margin:8px 0}.case-item b{display:block}.case-item .small{margin-top:4px}.case-status{display:block;font-weight:700;margin-top:8px}.status-ok{color:#16834b}.status-no{color:#b42318}.status-wait{color:#9a6700}
-.password-wrap{position:relative;display:flex;align-items:center}.password-wrap input{padding-right:48px;width:100%;box-sizing:border-box}.eye-btn{position:absolute;right:4px;top:4px;width:40px!important;height:40px!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;font-size:19px!important;color:#172033!important}.auth-link{background:transparent!important;color:#1769aa!important;border:0!important;text-decoration:underline!important;padding:6px!important;margin-top:2px!important}</style>
+.password-wrap{position:relative;display:flex;align-items:center}.password-wrap input{padding-right:48px;width:100%;box-sizing:border-box}.eye-btn{position:absolute;right:4px;top:4px;width:40px!important;height:40px!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;font-size:19px!important;color:#172033!important}.auth-link{background:transparent!important;color:#1769aa!important;border:0!important;text-decoration:underline!important;padding:6px!important;margin-top:2px!important}
+/* RESOLVA 2.4.0 — identidade visual e experiência mobile */
+:root{--ink:#14243a;--muted:#64748b;--line:#e5ebf2;--green:#087f5b;--green2:#0b9b70;--pale:#eaf7f1;--navy:#10263f;--gold:#d5a84b}
+body{background:#eef3f7;color:var(--ink);font-family:Inter,Arial,sans-serif}.app{max-width:560px;min-height:100vh;background:#f8fafc;box-shadow:0 0 36px rgba(16,38,63,.07)}
+header#appHeader{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);padding:16px 20px 14px;backdrop-filter:blur(12px)}
+.logo{font-size:24px;letter-spacing:-.8px;color:var(--navy)}.tag{font-size:12px;color:var(--muted)}.menu-btn{top:13px;right:16px;border-radius:12px;color:var(--navy);background:#f0f5f8}
+.menu-panel{padding:10px 16px;background:#fff;box-shadow:0 10px 20px rgba(16,38,63,.06)}.menu-panel button{border:0;border-radius:10px;padding:12px;background:#f7f9fb}
+main{padding:18px 18px 34px}h1{font-size:27px;line-height:1.14;letter-spacing:-.7px;color:var(--navy)}h2{font-size:20px;letter-spacing:-.3px;color:var(--navy)}p{color:#58677a}
+textarea,input,select{border:1px solid #d9e2eb;border-radius:13px;background:#fff;box-shadow:0 1px 2px rgba(16,38,63,.025);outline:none}
+textarea:focus,input:focus,select:focus{border-color:#54a98a;box-shadow:0 0 0 3px rgba(8,127,91,.10)}
+button{border-radius:13px;background:var(--green);box-shadow:0 3px 8px rgba(8,127,91,.12);transition:transform .12s ease,filter .12s ease}button:active{transform:scale(.99)}
+button.secondary,button.back,.auth-switch{background:#edf2f6;color:var(--navy);box-shadow:none}.card{border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 4px 14px rgba(16,38,63,.035);padding:16px}
+.badge{background:#e7f6ef;color:#08734f}.notice{border-radius:14px;background:#eff7ff;border-color:#d7e8f8}
+.auth-screen{min-height:76vh}.auth-card{width:100%;border:1px solid var(--line);border-radius:22px;padding:22px;background:#fff;box-shadow:0 12px 34px rgba(16,38,63,.07)}.auth-card h1{font-size:30px}
+.auth-note{font-size:12px;line-height:1.5;color:#58708a;background:#f1f6fa;border-radius:12px;padding:11px;margin:10px 0 14px}.auth-link{color:var(--green)!important}
+.home-hero{position:relative;overflow:hidden;border-radius:22px;padding:23px 20px 18px;margin:2px 0 20px;background:linear-gradient(135deg,#10263f 0%,#174d55 100%);color:#fff}
+.home-hero:after{content:"✓";position:absolute;right:-8px;top:-36px;font-size:150px;font-weight:900;color:rgba(255,255,255,.055);pointer-events:none}
+.home-hero h1{position:relative;color:#fff;font-size:29px;margin:9px 0}.home-hero p{position:relative;color:#d9e8e8;font-size:14px;margin:0;max-width:360px}
+.hero-kicker,.section-kicker{font-size:10px;font-weight:800;letter-spacing:1.5px;color:#9fe0c5}.hero-foot{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px;font-size:11px;color:#c7e9dc}
+.label{font-size:13px;color:#33465b;margin:12px 0 5px}.primary-action{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;background:linear-gradient(100deg,#087f5b,#0b9b70);letter-spacing:.2px}.primary-action span{font-size:21px}
+.dashboard-head{display:flex;align-items:center;justify-content:space-between;margin:25px 0 10px}.dashboard-head h2{margin:4px 0 0}.section-kicker{color:var(--green)}
+.text-action{width:auto;background:transparent;color:var(--green);box-shadow:none;padding:8px;margin:0;font-size:13px}
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.metric-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px 10px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.metric-icon{font-size:16px}.metric-card strong{font-size:24px;color:var(--navy);line-height:1.1}.metric-card span:last-child{font-size:10px;color:var(--muted);line-height:1.25}
+.recent-home{margin-top:12px}.empty-state{text-align:center;border:1px dashed #cfdbe5;border-radius:16px;padding:20px 16px;background:#fff}.empty-state>span{font-size:25px}.empty-state b{display:block;color:var(--navy);margin-top:7px}.empty-state p{font-size:12px;margin:5px auto 0;max-width:260px}
+.case-item{box-shadow:0 3px 12px rgba(16,38,63,.035)}.progress{background:#e9eff3;height:9px}.bar{background:linear-gradient(90deg,#087f5b,#45bd91);border-radius:8px}
+.message{background:#f7fafc;border-color:#dce6ee}.timeline{border-left-color:#b7d9ca}.event b{color:#17684f}.small{line-height:1.45}
+@media(max-width:360px){main{padding:14px}.home-hero{padding:19px 16px}.home-hero h1{font-size:25px}.dashboard-grid{gap:6px}.metric-card{padding:10px 7px}.metric-card strong{font-size:21px}}
+
+</style>
 
 
 
@@ -65,7 +94,7 @@ function resolvaRenderMessage(text) {
 <section id="login" class="screen active auth-screen">
 <div class="auth-card">
 <h1>✓ RESOLVA</h1>
-<p>Entre na sua conta para utilizar o RESOLVA e acompanhar seus casos.</p>
+<p>Entre para registrar problemas e acompanhar seus casos neste aparelho.</p><div class="auth-note">🔒 Versão offline: seus dados ficam salvos localmente neste dispositivo.</div>
 <label class="label">E-mail</label>
 <input id="loginEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
 <label class="label">Senha</label>
@@ -81,7 +110,7 @@ function resolvaRenderMessage(text) {
 <div class="auth-card">
 <button class="back" onclick="mostrarLogin()">← Voltar</button>
 <h1>Criar conta</h1>
-<p>Crie sua conta para utilizar o RESOLVA.</p>
+<p>Crie seu acesso local para organizar seus problemas neste aparelho.</p><div class="auth-note">Esta versão ainda não sincroniza dados pela internet nem envia recuperação de senha por e-mail.</div>
 <label class="label">E-mail</label>
 <input id="cadEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
 <label class="label">Senha</label>
@@ -94,11 +123,13 @@ function resolvaRenderMessage(text) {
 </section>
 
 <section id="home" class="screen">
-<h1>Qual é o seu problema?</h1>
-<p>Conte o que aconteceu. O RESOLVA vai entender a situação e mostrar o próximo caminho.</p>
-<textarea id="problem" rows="5" placeholder="Ex.: Comprei um celular pela internet e ele chegou quebrado."></textarea>
-<button onclick="analisar()">ENCONTRAR MEU CAMINHO</button>
-<div class="card"><b>🔒 Funcionamento offline</b><p class="small">O fluxo principal desta versão funciona localmente no navegador.</p></div>
+<div class="home-hero"><div class="hero-kicker">SEU GUIA DE SOLUÇÃO</div><h1>Qual é o seu problema?</h1><p>Conte o que aconteceu. Vamos organizar as informações e mostrar um próximo caminho.</p><div class="hero-foot"><span>✓ Simples</span><span>✓ Organizado</span><span>✓ Offline</span></div></div>
+<label class="label" for="problem">📝 Descreva a situação</label><textarea id="problem" rows="5" placeholder="Ex.: Comprei um celular pela internet e ele chegou quebrado."></textarea>
+<button class="primary-action" onclick="analisar()">ENCONTRAR MEU CAMINHO <span>→</span></button>
+<div class="dashboard-head"><div><div class="section-kicker">SEU PAINEL</div><h2>Meus acompanhamentos</h2></div><button class="text-action" onclick="meusCasos()">Ver todos</button></div>
+<div class="dashboard-grid"><div class="metric-card"><span class="metric-icon">📂</span><strong id="totalCasos">0</strong><span>Casos registrados</span></div><div class="metric-card"><span class="metric-icon">⏳</span><strong id="pendentesCasos">0</strong><span>Em andamento</span></div><div class="metric-card"><span class="metric-icon">✓</span><strong id="resolvidosCasos">0</strong><span>Resolvidos</span></div></div>
+<div id="recentesHome" class="recent-home"><div class="empty-state"><span>🧭</span><b>Seu histórico começa aqui</b><p>Depois de registrar um problema, você poderá acompanhar tudo nesta área.</p></div></div>
+<div class="notice"><b>🔒 Seus dados nesta versão</b><p class="small">Os casos ficam armazenados neste aparelho. Ainda não há sincronização entre dispositivos nem recuperação de senha por e-mail.</p></div>
 </section>
 
 <section id="ajuda" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>❓ Ajuda</h2><p>Como o RESOLVA funciona:</p><div class="card"><b>📝 1. Conte o problema</b><p>Descreva o que aconteceu.</p><b>🧭 2. Encontre seu caminho</b><p>O RESOLVA ajuda a identificar o próximo passo.</p><b>📂 3. Acompanhe em Meus Casos</b><p>Consulte o andamento e o histórico do caso.</p><b>💬 4. Registre as respostas</b><p>Informe quando a empresa responder e se o problema foi resolvido.</p></div></section>
@@ -275,11 +306,22 @@ function entrar(){
  if(email!==conta.email || senha!==conta.senha){msg.textContent="E-mail ou senha incorretos.";return}
  localStorage.setItem("resolva_sessao_v1","1");localStorage.removeItem("resolva_logout_v1");abrirApp();
 }
+function atualizarPainel(){
+ const elTotal=document.getElementById("totalCasos");if(!elTotal)return;
+ const lista=Array.isArray(s.casos)?s.casos.slice():[];
+ if(s.protocolo&&!lista.some(c=>c.protocolo===s.protocolo))lista.push({...s});
+ const total=lista.length,resolvidos=lista.filter(c=>c.status==="resolvido").length,pendentes=lista.filter(c=>c.status!=="resolvido").length;
+ document.getElementById("totalCasos").textContent=total;document.getElementById("pendentesCasos").textContent=pendentes;document.getElementById("resolvidosCasos").textContent=resolvidos;
+ const recentes=document.getElementById("recentesHome");if(!recentes)return;
+ if(!lista.length){recentes.innerHTML='<div class="empty-state"><span>🧭</span><b>Seu histórico começa aqui</b><p>Depois de registrar um problema, você poderá acompanhar tudo nesta área.</p></div>';return;}
+ recentes.innerHTML=lista.slice().reverse().slice(0,2).map(c=>{const st=statusCaso(c);return '<button class="case-item" onclick="meusCasos()"><b>'+esc(c.problema||"Caso sem descrição")+'</b><span class="case-status '+st.classe+'">'+st.texto+'</span><span class="small">📋 '+esc(c.protocolo||"Em preparação")+' • '+esc(c.empresa||"Empresa não informada")+'</span></button>';}).join("");
+}
 function abrirApp(){
  document.getElementById("appHeader").style.display="block";
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
  document.getElementById("home").classList.add("active");
  const c=contaAtual();if(document.getElementById("contaInfo"))document.getElementById("contaInfo").textContent=c?c.email:"";
+ atualizarPainel();
  scrollTo(0,0);
 }
 function sair(){
@@ -296,6 +338,7 @@ function tela(id){
  if(!sessaoAtiva() && id!=="login" && id!=="cadastro"){mostrarLogin();return}
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
  document.getElementById(id).classList.add("active");
+ if(id==="home")atualizarPainel();
  scrollTo(0,0);
  salvarLocal();
 }
@@ -316,6 +359,7 @@ function salvarLocal(){try{
     else s.casos.push(JSON.parse(JSON.stringify(dados)));
     localStorage.setItem("resolva_2_0_casos",JSON.stringify(s.casos));
   }
+  atualizarPainel();
 }catch(e){}}
 function limparEventosDuplicados(c){
   if(!c || !Array.isArray(c.eventos))return c;
@@ -538,7 +582,9 @@ function caso(){
  const st=statusCaso(s);
  document.getElementById("status").textContent=st.texto;
  document.getElementById("proximoCaso").textContent=st.proximo;
- linha();tela("caso");
+ linha();
+ const barra=document.getElementById("bar");if(barra)barra.style.width=s.status==="resolvido"?"100%":(s.status==="nao"?"80%":(s.status==="aguardando"?"55%":"25%"));
+ tela("caso");
 }
 
 function salvarProt(){
@@ -704,7 +750,7 @@ function salvar(){
  salvarLocal();alert("Avaliação registrada. Obrigado!");novo();
 }
 function novo(){
- Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false});
+ Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,status:"",canalUrl:"",origemMensagem:"caminho"});
  try{localStorage.removeItem("resolva_2_0")}catch(e){}
  document.getElementById("problem").value="";
  tela("home");
