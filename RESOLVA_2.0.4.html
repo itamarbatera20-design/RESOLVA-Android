@@ -60,6 +60,13 @@ button.secondary,button.back,.auth-switch{background:#edf2f6;color:var(--navy);b
 .message{background:#f7fafc;border-color:#dce6ee}.timeline{border-left-color:#b7d9ca}.event b{color:#17684f}.small{line-height:1.45}
 @media(max-width:360px){main{padding:14px}.home-hero{padding:19px 16px}.home-hero h1{font-size:25px}.dashboard-grid{gap:6px}.metric-card{padding:10px 7px}.metric-card strong{font-size:21px}}
 
+
+/* Marca oficial RESOLVA — conceito azul + verde */
+.brand-cover{position:relative;overflow:hidden;border-radius:20px;padding:18px 18px 16px;margin:0 0 18px;background:linear-gradient(135deg,#0754c7 0%,#102c66 58%,#071d43 100%);color:#fff;box-shadow:0 10px 24px rgba(7,38,91,.18)}
+.brand-cover:before{content:"";position:absolute;left:-8%;right:-8%;bottom:-32px;height:72px;background:linear-gradient(100deg,#0c9b55 0 42%,#e6bd21 43% 48%,transparent 49%);transform:skewY(-7deg);opacity:.98}
+.brand-cover:after{content:"";position:absolute;right:8px;bottom:17px;width:46%;height:78px;opacity:.16;background:linear-gradient(to top,#061b3c 0 100%);clip-path:polygon(0 100%,0 62%,9% 62%,9% 42%,16% 42%,16% 70%,24% 70%,24% 20%,34% 20%,34% 54%,42% 54%,42% 0,54% 0,54% 62%,63% 62%,63% 35%,72% 35%,72% 74%,82% 74%,82% 48%,91% 48%,91% 100%)}
+.brand-lockup{position:relative;z-index:1;display:flex;align-items:center;gap:12px}.brand-symbol{position:relative;flex:0 0 58px;width:58px;height:58px;border-radius:15px;background:linear-gradient(145deg,#fff,#dce9ff);color:#0754c7;display:grid;place-items:center;font-size:49px;font-weight:900;line-height:1;box-shadow:0 5px 12px rgba(0,0,0,.2);letter-spacing:-5px;padding-right:5px}.brand-symbol:after{content:"✓";position:absolute;right:-5px;bottom:1px;color:#55e52d;font-size:34px;font-weight:900;text-shadow:0 2px 3px #07336b;transform:rotate(-8deg)}
+.brand-name{font-size:25px;font-weight:900;letter-spacing:.5px;color:#fff;line-height:1.05}.brand-slogan{font-size:11px;line-height:1.35;color:#e5efff;margin-top:5px;max-width:235px}.auth-card .brand-cover{margin:-2px -2px 18px;padding:17px 15px 22px}.auth-card .brand-name{font-size:27px}.app-header-brand{display:flex;align-items:center;gap:9px}.app-header-brand .brand-symbol{width:38px;height:38px;flex-basis:38px;border-radius:10px;font-size:33px;letter-spacing:-4px}.app-header-brand .brand-symbol:after{font-size:23px;right:-4px}.app-header-brand .brand-name{font-size:20px;color:var(--navy)}
 </style>
 
 
@@ -88,12 +95,12 @@ function resolvaRenderMessage(text) {
 </head>
 <body>
 <div class="app">
-<header id="appHeader" style="display:none;position:sticky"><button class="menu-btn" onclick="toggleMenu()" aria-label="Abrir menu">☰</button><div class="logo">✓ RESOLVA</div><div class="tag">Você conta o problema. A gente mostra o caminho.</div></header><nav id="menuPanel" class="menu-panel"><button onclick="irInicio()">🏠 Início</button><button onclick="meusCasos()">📂 Meus casos</button><button onclick="configuracoes()">⚙️ Configurações</button><button onclick="ajuda()">❓ Ajuda</button><button onclick="sairDoMenu()">🚪 Sair</button></nav>
+<header id="appHeader" style="display:none;position:sticky"><button class="menu-btn" onclick="toggleMenu()" aria-label="Abrir menu">☰</button><div class="app-header-brand"><div class="brand-symbol">R</div><div><div class="brand-name">RESOLVA</div><div class="tag">Você conta o problema. A gente mostra o caminho.</div></div></div></header><nav id="menuPanel" class="menu-panel"><button onclick="irInicio()">🏠 Início</button><button onclick="meusCasos()">📂 Meus casos</button><button onclick="configuracoes()">⚙️ Configurações</button><button onclick="ajuda()">❓ Ajuda</button><button onclick="sairDoMenu()">🚪 Sair</button></nav>
 <main>
 
 <section id="login" class="screen active auth-screen">
 <div class="auth-card">
-<h1>✓ RESOLVA</h1>
+<div class="brand-cover"><div class="brand-lockup"><div class="brand-symbol">R</div><div><div class="brand-name">RESOLVA</div><div class="brand-slogan">Você conta o problema.<br>A gente mostra o caminho.</div></div></div></div>
 <p>Entre para registrar problemas e acompanhar seus casos neste aparelho.</p><div class="auth-note">🔒 Versão offline: seus dados ficam salvos localmente neste dispositivo.</div>
 <label class="label">E-mail</label>
 <input id="loginEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
