@@ -125,7 +125,7 @@ function resolvaRenderMessage(text) {
 <div class="auth-card">
 <button class="back" onclick="mostrarLogin()">← Voltar</button>
 <h1>Criar conta</h1>
-<p>Crie seu acesso local para organizar seus problemas neste aparelho.</p><div class="auth-note">Esta versão ainda não sincroniza dados pela internet nem envia recuperação de senha por e-mail.</div>
+<p>Crie seu acesso local para organizar seus problemas neste aparelho.</p><div class="auth-note">A senha é protegida por derivação criptográfica neste aparelho. Esta versão ainda não sincroniza dados nem envia recuperação por e-mail.</div>
 <label class="label">E-mail</label>
 <input id="cadEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
 <label class="label">Senha</label>
@@ -273,9 +273,49 @@ const CATEGORIAS=[
 "Trabalho / Serviços profissionais","Contratos / Serviços","Outro"
 ];
 
+const PBKDF2_ITERATIONS=210000;
 function contaAtual(){try{return JSON.parse(localStorage.getItem("resolva_conta_v1")||"null")}catch(e){return null}}
 function sessaoAtiva(){try{return localStorage.getItem("resolva_sessao_v1")==="1" && localStorage.getItem("resolva_logout_v1")!=="1"}catch(e){return false}}
 function normalizarEmail(v){return String(v||"").trim().toLowerCase()}
+function cryptoDisponivel(){
+ return !!(window.crypto && window.crypto.subtle && window.crypto.getRandomValues);
+}
+function bytesParaHex(bytes){
+ return Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function hexParaBytes(hex){
+ if(!/^(?:[0-9a-f]{2})+$/i.test(hex||""))throw new Error("Formato criptográfico inválido.");
+ return new Uint8Array(hex.match(/.{2}/g).map(b=>parseInt(b,16)));
+}
+async function derivarSenha(senha,saltHex,iteracoes){
+ if(!cryptoDisponivel())throw new Error("Este aparelho não oferece suporte à proteção criptográfica necessária. Atualize o Android System WebView e tente novamente.");
+ const material=await crypto.subtle.importKey("raw",new TextEncoder().encode(senha),"PBKDF2",false,["deriveBits"]);
+ const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt:hexParaBytes(saltHex),iterations:iteracoes,hash:"SHA-256"},material,256);
+ return bytesParaHex(bits);
+}
+async function criarCredencial(senha){
+ if(!cryptoDisponivel())throw new Error("Não foi possível ativar a proteção criptográfica neste aparelho. Nenhuma senha foi salva.");
+ const salt=new Uint8Array(16);crypto.getRandomValues(salt);
+ const saltHex=bytesParaHex(salt);
+ return {email:normalizarEmail(document.getElementById("cadEmail").value),passwordHash:await derivarSenha(senha,saltHex,PBKDF2_ITERATIONS),salt:saltHex,kdf:"PBKDF2-SHA-256",iterations:PBKDF2_ITERATIONS,credentialVersion:2};
+}
+async function validarCredencial(conta,senha){
+ if(conta && conta.kdf==="PBKDF2-SHA-256" && conta.passwordHash && conta.salt){
+  const derivada=await derivarSenha(senha,conta.salt,Number(conta.iterations)||PBKDF2_ITERATIONS);
+  if(derivada.length!==conta.passwordHash.length)return false;
+  let diferenca=0;for(let i=0;i<derivada.length;i++)diferenca|=derivada.charCodeAt(i)^conta.passwordHash.charCodeAt(i);
+  return diferenca===0;
+ }
+ // Migração de contas antigas: validar uma única vez e substituir a senha em texto puro.
+ if(conta && typeof conta.senha==="string" && conta.senha===senha){
+  const salt=new Uint8Array(16);crypto.getRandomValues(salt);
+  const saltHex=bytesParaHex(salt);
+  const atualizada={email:conta.email,passwordHash:await derivarSenha(senha,saltHex,PBKDF2_ITERATIONS),salt:saltHex,kdf:"PBKDF2-SHA-256",iterations:PBKDF2_ITERATIONS,credentialVersion:2};
+  localStorage.setItem("resolva_conta_v1",JSON.stringify(atualizada));
+  return true;
+ }
+ return false;
+}
 function mostrarLogin(msg){
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
  document.getElementById("login").classList.add("active");
@@ -300,26 +340,45 @@ function esqueciSenha(){
  if(email && email!==conta.email){document.getElementById("loginMsg").textContent="Esse e-mail não corresponde à conta deste navegador.";return}
  document.getElementById("loginMsg").textContent="Nesta versão de teste, a recuperação de senha ainda é local. Na versão com servidor, enviaremos um link de recuperação para o e-mail cadastrado.";
 }
-function criarConta(){
+async function criarConta(){
  const email=normalizarEmail(document.getElementById("cadEmail").value);
  const senha=document.getElementById("cadSenha").value;
  const senha2=document.getElementById("cadSenha2").value;
  const msg=document.getElementById("cadMsg");
  if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent="Informe um e-mail válido.";return}
- if(senha.length<6){msg.textContent="A senha precisa ter pelo menos 6 caracteres.";return}
+ if(senha.length<8){msg.textContent="Use uma senha com pelo menos 8 caracteres.";return}
  if(senha!==senha2){msg.textContent="As senhas não conferem.";return}
- if(contaAtual()){msg.textContent="Já existe uma conta neste navegador. Entre com ela ou saia dela antes de criar outra.";return}
- try{localStorage.setItem("resolva_conta_v1",JSON.stringify({email:email,senha:senha}));localStorage.setItem("resolva_sessao_v1","1");localStorage.removeItem("resolva_logout_v1");abrirApp();}
- catch(e){msg.textContent="Não foi possível salvar a conta neste navegador.";}
+ if(contaAtual()){msg.textContent="Já existe uma conta neste aparelho. Entre com ela ou saia antes de criar outra.";return}
+ const botao=document.querySelector("#cadastro button[onclick='criarConta()']");
+ if(botao)botao.disabled=true;
+ msg.textContent="Protegendo sua senha...";
+ try{
+  const credencial=await criarCredencial(senha);
+  localStorage.setItem("resolva_conta_v1",JSON.stringify(credencial));
+  localStorage.setItem("resolva_sessao_v1","1");
+  localStorage.removeItem("resolva_logout_v1");
+  abrirApp();
+ }catch(e){msg.textContent=e && e.message ? e.message : "Não foi possível criar a conta com segurança neste aparelho.";}
+ finally{if(botao)botao.disabled=false;}
 }
-function entrar(){
+async function entrar(){
  const email=normalizarEmail(document.getElementById("loginEmail").value);
  const senha=document.getElementById("loginSenha").value;
  const conta=contaAtual();
  const msg=document.getElementById("loginMsg");
- if(!conta){msg.textContent="Você ainda não criou uma conta neste navegador.";return}
- if(email!==conta.email || senha!==conta.senha){msg.textContent="E-mail ou senha incorretos.";return}
- localStorage.setItem("resolva_sessao_v1","1");localStorage.removeItem("resolva_logout_v1");abrirApp();
+ if(!conta){msg.textContent="Você ainda não criou uma conta neste aparelho.";return}
+ if(email!==conta.email){msg.textContent="E-mail ou senha incorretos.";return}
+ const botao=document.querySelector("#login button[onclick='entrar()']");
+ if(botao)botao.disabled=true;
+ msg.textContent="Verificando acesso...";
+ try{
+  const valido=await validarCredencial(conta,senha);
+  if(!valido){msg.textContent="E-mail ou senha incorretos.";return}
+  localStorage.setItem("resolva_sessao_v1","1");
+  localStorage.removeItem("resolva_logout_v1");
+  abrirApp();
+ }catch(e){msg.textContent=e && e.message ? e.message : "Não foi possível verificar a senha neste aparelho.";}
+ finally{if(botao)botao.disabled=false;}
 }
 function atualizarPainel(){
  const elTotal=document.getElementById("totalCasos");if(!elTotal)return;
