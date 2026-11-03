@@ -177,9 +177,9 @@ jobs:
                   return new String(c.doFinal(e),StandardCharsets.UTF_8);
               }
               private final class SecureStorageBridge{
-                  @JavascriptInterface public String getItem(String n){synchronized(MainActivity.this){try{String v=securePrefs.getString(n,null);return v==null?null:decrypt(v);}catch(Exception e){throw new RuntimeException("Falha ao abrir dados protegidos.",e);}}}
-                  @JavascriptInterface public void setItem(String n,String v){synchronized(MainActivity.this){try{securePrefs.edit().putString(n,encrypt(v)).commit();}catch(Exception e){throw new RuntimeException("Falha ao proteger dados.",e);}}}
-                  @JavascriptInterface public void removeItem(String n){synchronized(MainActivity.this){securePrefs.edit().remove(n).commit();}}
+                  @JavascriptInterface public String getItem(String n){synchronized(MainActivity.this){try{String v=securePrefs.getString(n,null);return v==null?null:decrypt(v);}catch(Exception e){return "__RESOLVA_SECURE_STORAGE_ERROR__";}}}
+                  @JavascriptInterface public void setItem(String n,String v){synchronized(MainActivity.this){try{boolean ok=securePrefs.edit().putString(n,encrypt(v)).commit();if(!ok)throw new IllegalStateException("Falha ao gravar dados protegidos.");}catch(Exception e){throw new RuntimeException("Falha ao proteger dados.",e);}}}
+                  @JavascriptInterface public void removeItem(String n){synchronized(MainActivity.this){if(!securePrefs.edit().remove(n).commit())throw new RuntimeException("Falha ao remover dado protegido.");}}
               }
 
               private WebView webView;
