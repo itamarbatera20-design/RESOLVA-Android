@@ -565,9 +565,10 @@ function corrigirCategoria(){
 }
 function aplicarCategoria(){
  const v=document.getElementById("categoriaManual").value;
+ const anterior=s.categoria, manualAnterior=s.categoriaManual;
  s.categoria=v;
  s.categoriaManual=true;
- salvarLocal();
+ if(!salvarLocal()){s.categoria=anterior;s.categoriaManual=manualAnterior;return;}
  montar();
 }
 
