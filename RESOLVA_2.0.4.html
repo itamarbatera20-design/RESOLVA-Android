@@ -478,7 +478,7 @@ function meusCasos(){
   tela("meusCasos");
 }
 function abrirCaso(i){const c=window._listaCasos[i];if(!c)return;Object.assign(s,JSON.parse(JSON.stringify(c)));salvarLocal();caso();}
-function esc(x){return String(x||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 
 function detectar(t){
  const x=normal(t);
