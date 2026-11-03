@@ -129,7 +129,7 @@ function resolvaRenderMessage(text) {
 <label class="label">E-mail</label>
 <input id="cadEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
 <label class="label">Senha</label>
-<div class="password-wrap"><input id="cadSenha" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha',this)" aria-label="Mostrar senha">👁️</button></div>
+<div class="password-wrap"><input id="cadSenha" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha',this)" aria-label="Mostrar senha">👁️</button></div>
 <label class="label">Confirmar senha</label>
 <div class="password-wrap"><input id="cadSenha2" type="password" autocomplete="new-password" placeholder="Digite a senha novamente"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha2',this)" aria-label="Mostrar senha">👁️</button></div>
 <button onclick="criarConta()">CRIAR CONTA</button>
@@ -339,7 +339,7 @@ function esqueciSenha(){
  const conta=contaAtual();
  if(!conta){document.getElementById("loginMsg").textContent="Nenhuma conta foi encontrada neste navegador.";return}
  if(email && email!==conta.email){document.getElementById("loginMsg").textContent="Esse e-mail não corresponde à conta deste navegador.";return}
- document.getElementById("loginMsg").textContent="Nesta versão de teste, a recuperação de senha ainda é local. Na versão com servidor, enviaremos um link de recuperação para o e-mail cadastrado.";
+ document.getElementById("loginMsg").textContent="A recuperação de senha ainda não está disponível nesta versão offline. Guarde sua senha em local seguro: não será possível redefini-la pelo aplicativo.";
 }
 async function criarConta(){
  const email=normalizarEmail(document.getElementById("cadEmail").value);
@@ -437,15 +437,15 @@ function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error(
 function secureRemoveItem(key){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.removeItem(key)!==true)throw new Error("Não foi possível remover o dado protegido.");return;}localStorage.removeItem(key);}
 function salvarLocal(){if(resolvaStorageIndisponivel)return false;try{
   const dados={...s}; delete dados.casos;
-  secureSetItem("resolva_2_0",JSON.stringify(dados));
+  const casosAtualizados=Array.isArray(s.casos)?s.casos.slice():[];
   if(s.protocolo){
-    const casosAnteriores=Array.isArray(s.casos)?s.casos.slice():[];
-    const idx=casosAnteriores.findIndex(c=>c.protocolo===s.protocolo);
-    if(idx>=0)casosAnteriores[idx]=JSON.parse(JSON.stringify(dados));
-    else casosAnteriores.push(JSON.parse(JSON.stringify(dados)));
-    secureSetItem("resolva_2_0_casos",JSON.stringify(casosAnteriores));
-    s.casos=casosAnteriores;
+    const idx=casosAtualizados.findIndex(c=>c.protocolo===s.protocolo);
+    if(idx>=0)casosAtualizados[idx]=JSON.parse(JSON.stringify(dados));
+    else casosAtualizados.push(JSON.parse(JSON.stringify(dados)));
   }
+  // Estado atual e histórico são gravados juntos em uma única operação criptografada.
+  secureSetItem("resolva_2_0_bundle",JSON.stringify({estado:dados,casos:casosAtualizados}));
+  s.casos=casosAtualizados;
   atualizarPainel();
   return true;
 }catch(e){resolvaStorageIndisponivel=true;alert("Não foi possível confirmar o salvamento dos dados protegidos. A ação foi interrompida; evite fechar o aplicativo. Seus dados anteriores não foram apagados.");return false;}}
@@ -460,8 +460,22 @@ function limparEventosDuplicados(c){
   return c;
 }
 function carregarLocal(){
-  const x=secureGetItem("resolva_2_0");if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));
-  const cs=secureGetItem("resolva_2_0_casos");if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados);
+  const pacote=secureGetItem("resolva_2_0_bundle");
+  if(pacote){
+    const salvo=JSON.parse(pacote);
+    if(salvo.estado)Object.assign(s,limparEventosDuplicados(salvo.estado));
+    if(Array.isArray(salvo.casos))s.casos=salvo.casos.map(limparEventosDuplicados);
+    return;
+  }
+  // Migração compatível: lê os dois formatos antigos e preserva as chaves legadas.
+  const x=secureGetItem("resolva_2_0");
+  const cs=secureGetItem("resolva_2_0_casos");
+  if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));
+  if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados);
+  if(x||cs){
+    const dados={...s};delete dados.casos;
+    secureSetItem("resolva_2_0_bundle",JSON.stringify({estado:dados,casos:Array.isArray(s.casos)?s.casos:[]}));
+  }
 }
 function ajuda(){fecharMenu();tela("ajuda")}
 function sairDoMenu(){fecharMenu();sair()}
@@ -855,7 +869,7 @@ function configuracoes(){tela('configuracoes');}
 try{
  carregarLocal();
  if(!Array.isArray(s.casos))s.casos=[];
- if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){const d={...s};delete d.casos;s.casos.push(d);secureSetItem("resolva_2_0_casos",JSON.stringify(s.casos));}
+ if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){if(!salvarLocal())throw new Error("Não foi possível consolidar o histórico protegido.");}
  if(s.problema)document.getElementById("problem").value=s.problema;
  if(localStorage.getItem("resolva_logout_v1")==="1"){mostrarLogin();}
  else{exigirLogin();}
