@@ -109,7 +109,7 @@ function resolvaRenderMessage(text) {
 <section id="login" class="screen active auth-screen">
 <div class="auth-card">
 <div class="brand-cover"><div class="brand-lockup"><img class="brand-symbol" src="brand-resolva.svg" alt="Símbolo RESOLVA"><div><div class="brand-name">RESOLVA</div><div class="brand-slogan">Você conta o problema.<br>A gente mostra o caminho.</div></div></div></div>
-<p>Entre para registrar problemas e acompanhar seus casos neste aparelho.</p><div class="auth-note">🔒 Versão offline: seus dados ficam salvos localmente neste dispositivo.</div>
+<p>Entre para registrar problemas e acompanhar seus casos neste aparelho.</p><div class="auth-note">🔒 Versão offline: no Android, os registros dos casos são criptografados no aparelho com uma chave protegida pelo sistema.</div>
 <label class="label">E-mail</label>
 <input id="loginEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
 <label class="label">Senha</label>
@@ -424,14 +424,21 @@ function registrarEvento(texto){
   if(!existe)s.eventos.push([texto,hoje]);
 }
 function normal(t){return (t||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function secureGetItem(key){
+ const b=window.ResolvaSecureStorage;
+ if(b){const v=b.getItem(key);if(v!==null&&v!==undefined)return v;const legacy=localStorage.getItem(key);if(legacy!==null){b.setItem(key,legacy);localStorage.removeItem(key);}return legacy;}
+ return localStorage.getItem(key);
+}
+function secureSetItem(key,value){const b=window.ResolvaSecureStorage;if(b){b.setItem(key,String(value));return;}localStorage.setItem(key,value);}
+function secureRemoveItem(key){const b=window.ResolvaSecureStorage;if(b){b.removeItem(key);return;}localStorage.removeItem(key);}
 function salvarLocal(){try{
   const dados={...s}; delete dados.casos;
-  localStorage.setItem("resolva_2_0",JSON.stringify(dados));
+  secureSetItem("resolva_2_0",JSON.stringify(dados));
   if(s.protocolo){
     const idx=s.casos.findIndex(c=>c.protocolo===s.protocolo);
     if(idx>=0)s.casos[idx]=JSON.parse(JSON.stringify(dados));
     else s.casos.push(JSON.parse(JSON.stringify(dados)));
-    localStorage.setItem("resolva_2_0_casos",JSON.stringify(s.casos));
+    secureSetItem("resolva_2_0_casos",JSON.stringify(s.casos));
   }
   atualizarPainel();
 }catch(e){}}
@@ -446,8 +453,8 @@ function limparEventosDuplicados(c){
   return c;
 }
 function carregarLocal(){try{
-  const x=localStorage.getItem("resolva_2_0");if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));
-  const cs=localStorage.getItem("resolva_2_0_casos");if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados);
+  const x=secureGetItem("resolva_2_0");if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));
+  const cs=secureGetItem("resolva_2_0_casos");if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados);
 }catch(e){}}
 function ajuda(){fecharMenu();tela("ajuda")}
 function sairDoMenu(){fecharMenu();sair()}
@@ -825,14 +832,14 @@ function salvar(){
 }
 function novo(){
  Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,status:"",canalUrl:"",origemMensagem:"caminho"});
- try{localStorage.removeItem("resolva_2_0")}catch(e){}
+ try{secureRemoveItem("resolva_2_0")}catch(e){}
  document.getElementById("problem").value="";
  tela("home");
 }
 function configuracoes(){tela('configuracoes');}
 carregarLocal();
 if(!Array.isArray(s.casos))s.casos=[];
-if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){const d={...s};delete d.casos;s.casos.push(d);try{localStorage.setItem("resolva_2_0_casos",JSON.stringify(s.casos))}catch(e){}}
+if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){const d={...s};delete d.casos;s.casos.push(d);try{secureSetItem("resolva_2_0_casos",JSON.stringify(s.casos))}catch(e){}}
 if(s.problema)document.getElementById("problem").value=s.problema;
 // Inicialização: somente uma tela fica visível. Após Sair, sempre voltar ao Login.
 try{
