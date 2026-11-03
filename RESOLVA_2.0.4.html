@@ -349,7 +349,9 @@ async function criarConta(){
  if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent="Informe um e-mail válido.";return}
  if(senha.length<8){msg.textContent="Use uma senha com pelo menos 8 caracteres.";return}
  if(senha!==senha2){msg.textContent="As senhas não conferem.";return}
- if(contaAtual()){msg.textContent="Já existe uma conta neste aparelho. Entre com ela ou saia antes de criar outra.";return}
+ if(resolvaStorageIndisponivel){msg.textContent="Os dados protegidos não puderam ser abertos. Não é seguro criar outra conta neste momento.";return}
+ let contaExistente;try{contaExistente=contaAtual()}catch(e){resolvaStorageIndisponivel=true;msg.textContent="Não foi possível abrir os dados protegidos. Nenhuma informação foi alterada.";return}
+ if(contaExistente){msg.textContent="Já existe uma conta neste aparelho. Entre com ela ou saia antes de criar outra.";return}
  const botao=document.querySelector("#cadastro button[onclick='criarConta()']");
  if(botao)botao.disabled=true;
  msg.textContent="Protegendo sua senha...";
@@ -365,8 +367,9 @@ async function criarConta(){
 async function entrar(){
  const email=normalizarEmail(document.getElementById("loginEmail").value);
  const senha=document.getElementById("loginSenha").value;
- const conta=contaAtual();
  const msg=document.getElementById("loginMsg");
+ if(resolvaStorageIndisponivel){msg.textContent="Os dados protegidos não puderam ser abertos. Seus registros foram preservados; tente novamente mais tarde.";return}
+ let conta;try{conta=contaAtual()}catch(e){resolvaStorageIndisponivel=true;msg.textContent="Não foi possível abrir os dados protegidos. Seus registros não foram alterados.";return}
  if(!conta){msg.textContent="Você ainda não criou uma conta neste aparelho.";return}
  if(email!==conta.email){msg.textContent="E-mail ou senha incorretos.";return}
  const botao=document.querySelector("#login button[onclick='entrar()']");
@@ -432,7 +435,7 @@ function secureGetItem(key){
 }
 function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){b.setItem(key,String(value));return;}localStorage.setItem(key,value);}
 function secureRemoveItem(key){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){b.removeItem(key);return;}localStorage.removeItem(key);}
-function salvarLocal(){try{
+function salvarLocal(){if(resolvaStorageIndisponivel)return;try{
   const dados={...s}; delete dados.casos;
   secureSetItem("resolva_2_0",JSON.stringify(dados));
   if(s.protocolo){
@@ -453,10 +456,10 @@ function limparEventosDuplicados(c){
   });
   return c;
 }
-function carregarLocal(){try{
+function carregarLocal(){
   const x=secureGetItem("resolva_2_0");if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));
   const cs=secureGetItem("resolva_2_0_casos");if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados);
-}catch(e){}}
+}
 function ajuda(){fecharMenu();tela("ajuda")}
 function sairDoMenu(){fecharMenu();sair()}
 function toggleMenu(){document.getElementById("menuPanel").classList.toggle("open")}
@@ -832,8 +835,9 @@ function salvar(){
  salvarLocal();alert("Avaliação registrada. Obrigado!");novo();
 }
 function novo(){
+ if(resolvaStorageIndisponivel){alert("Os dados protegidos estão indisponíveis. Nenhum registro foi apagado.");return}
  Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,status:"",canalUrl:"",origemMensagem:"caminho"});
- try{secureRemoveItem("resolva_2_0")}catch(e){}
+ secureRemoveItem("resolva_2_0")
  document.getElementById("problem").value="";
  tela("home");
 }
