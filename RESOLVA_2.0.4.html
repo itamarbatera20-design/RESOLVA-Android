@@ -840,9 +840,15 @@ function salvar(){
 }
 function novo(){
  if(resolvaStorageIndisponivel){alert("Os dados protegidos estão indisponíveis. Nenhum registro foi apagado.");return}
+ const anterior=JSON.parse(JSON.stringify(s));
+ const textoAnterior=document.getElementById("problem").value;
  Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,status:"",canalUrl:"",origemMensagem:"caminho"});
  document.getElementById("problem").value="";
- if(!salvarLocal())return;
+ if(!salvarLocal()){
+   Object.assign(s,anterior);
+   document.getElementById("problem").value=textoAnterior;
+   return;
+ }
  tela("home");
 }
 function configuracoes(){tela('configuracoes');}
