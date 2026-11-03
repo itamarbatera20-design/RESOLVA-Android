@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Compilar RESOLVA 2.4.0
+    name: Compilar RESOLVA 2.4.0 (debug + AAB de validação)
     runs-on: ubuntu-latest
 
     steps:
@@ -102,12 +102,12 @@ jobs:
               <uses-permission android:name="android.permission.INTERNET" />
 
               <application
-                  android:allowBackup="true"
+                  android:allowBackup="false"
                   android:label="RESOLVA"
                   android:icon="@mipmap/ic_launcher"
                   android:roundIcon="@mipmap/ic_launcher_round"
                   android:theme="@android:style/Theme.Material.Light.NoActionBar"
-                  android:usesCleartextTraffic="true">
+                  android:usesCleartextTraffic="false">
 
                   <activity
                       android:name=".MainActivity"
@@ -130,10 +130,13 @@ jobs:
           package com.resolva.app;
 
           import android.app.Activity;
+          import android.content.Intent;
+          import android.net.Uri;
           import android.os.Bundle;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
+          import android.webkit.WebResourceRequest;
 
           public class MainActivity extends Activity {
 
@@ -151,9 +154,37 @@ jobs:
                   settings.setDomStorageEnabled(true);
                   settings.setDatabaseEnabled(true);
                   settings.setAllowFileAccess(true);
-                  settings.setAllowContentAccess(true);
+                  settings.setAllowContentAccess(false);
+                  settings.setAllowFileAccessFromFileURLs(false);
+                  settings.setAllowUniversalAccessFromFileURLs(false);
+                  settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+                  settings.setJavaScriptCanOpenWindowsAutomatically(false);
 
-                  webView.setWebViewClient(new WebViewClient());
+                  webView.setWebViewClient(new WebViewClient() {
+                      private boolean abrirLinkExterno(String url) {
+                          if (url == null) return true;
+                          Uri uri = Uri.parse(url);
+                          if ("https".equalsIgnoreCase(uri.getScheme())) {
+                              try {
+                                  startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                              } catch (Exception ignored) { }
+                          }
+                          return true;
+                      }
+
+                      @Override
+                      public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                          Uri uri = request.getUrl();
+                          if ("file".equalsIgnoreCase(uri.getScheme())) return false;
+                          return abrirLinkExterno(uri.toString());
+                      }
+
+                      @Override
+                      public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                          if (url != null && url.startsWith("file://")) return false;
+                          return abrirLinkExterno(url);
+                      }
+                  });
                   webView.loadUrl("file:///android_asset/index.html");
               }
 
@@ -176,10 +207,16 @@ jobs:
 
       - name: Gerar APK
         run: |
-          /tmp/gradle/bin/gradle assembleDebug --no-daemon
+          /tmp/gradle/bin/gradle assembleDebug bundleRelease --no-daemon
 
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
           name: RESOLVA-Android-2.4.0
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Disponibilizar AAB de validação (não assinado)
+        uses: actions/upload-artifact@v4
+        with:
+          name: RESOLVA-AAB-UNSIGNED-2.4.0
+          path: app/build/outputs/bundle/release/app-release.aab
