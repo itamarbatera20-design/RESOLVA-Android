@@ -274,7 +274,7 @@ const CATEGORIAS=[
 ];
 
 const PBKDF2_ITERATIONS=210000;
-function contaAtual(){try{return JSON.parse(localStorage.getItem("resolva_conta_v1")||"null")}catch(e){return null}}
+function contaAtual(){try{return JSON.parse(secureGetItem("resolva_conta_v1")||"null")}catch(e){return null}}
 function sessaoAtiva(){try{return localStorage.getItem("resolva_sessao_v1")==="1" && localStorage.getItem("resolva_logout_v1")!=="1"}catch(e){return false}}
 function normalizarEmail(v){return String(v||"").trim().toLowerCase()}
 function cryptoDisponivel(){
@@ -311,7 +311,7 @@ async function validarCredencial(conta,senha){
   const salt=new Uint8Array(16);crypto.getRandomValues(salt);
   const saltHex=bytesParaHex(salt);
   const atualizada={email:conta.email,passwordHash:await derivarSenha(senha,saltHex,PBKDF2_ITERATIONS),salt:saltHex,kdf:"PBKDF2-SHA-256",iterations:PBKDF2_ITERATIONS,credentialVersion:2};
-  localStorage.setItem("resolva_conta_v1",JSON.stringify(atualizada));
+  secureSetItem("resolva_conta_v1",JSON.stringify(atualizada));
   return true;
  }
  return false;
@@ -354,7 +354,7 @@ async function criarConta(){
  msg.textContent="Protegendo sua senha...";
  try{
   const credencial=await criarCredencial(senha);
-  localStorage.setItem("resolva_conta_v1",JSON.stringify(credencial));
+  secureSetItem("resolva_conta_v1",JSON.stringify(credencial));
   localStorage.setItem("resolva_sessao_v1","1");
   localStorage.removeItem("resolva_logout_v1");
   abrirApp();
