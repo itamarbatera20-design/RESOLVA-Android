@@ -445,7 +445,7 @@ function salvarLocal(){if(resolvaStorageIndisponivel)return;try{
     secureSetItem("resolva_2_0_casos",JSON.stringify(s.casos));
   }
   atualizarPainel();
-}catch(e){}}
+}catch(e){resolvaStorageIndisponivel=true;alert("Não foi possível confirmar o salvamento dos dados protegidos. Evite fechar o aplicativo ou criar novos registros. Seus dados anteriores não foram apagados.");}}
 function limparEventosDuplicados(c){
   if(!c || !Array.isArray(c.eventos))return c;
   const vistos=new Set();
