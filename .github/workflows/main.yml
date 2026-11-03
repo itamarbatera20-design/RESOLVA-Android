@@ -97,6 +97,10 @@ jobs:
                   targetCompatibility JavaVersion.VERSION_17
               }
           }
+
+          dependencies {
+              implementation 'androidx.webkit:webkit:1.12.1'
+          }
           EOF
 
           cat > app/src/main/AndroidManifest.xml <<'EOF'
@@ -140,6 +144,8 @@ jobs:
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
           import android.webkit.WebResourceRequest;
+          import android.webkit.WebResourceResponse;
+          import androidx.webkit.WebViewAssetLoader;
           import android.webkit.JavascriptInterface;
           import android.content.SharedPreferences;
           import android.security.keystore.KeyGenParameterSpec;
@@ -197,12 +203,16 @@ jobs:
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
                   settings.setDatabaseEnabled(true);
-                  settings.setAllowFileAccess(true);
+                  settings.setAllowFileAccess(false);
                   settings.setAllowContentAccess(false);
                   settings.setAllowFileAccessFromFileURLs(false);
                   settings.setAllowUniversalAccessFromFileURLs(false);
                   settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
                   settings.setJavaScriptCanOpenWindowsAutomatically(false);
+
+                  final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                      .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                      .build();
 
                   webView.setWebViewClient(new WebViewClient() {
                       private boolean abrirLinkExterno(String url) {
@@ -217,19 +227,27 @@ jobs:
                       }
 
                       @Override
+                      public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                          return assetLoader.shouldInterceptRequest(request.getUrl());
+                      }
+
+                      @Override
                       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                           Uri uri = request.getUrl();
-                          if ("file".equalsIgnoreCase(uri.getScheme())) return false;
+                          if ("https".equalsIgnoreCase(uri.getScheme()) &&
+                              "appassets.androidplatform.net".equalsIgnoreCase(uri.getHost())) return false;
                           return abrirLinkExterno(uri.toString());
                       }
 
                       @Override
                       public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                          if (url != null && url.startsWith("file://")) return false;
+                          Uri uri = Uri.parse(url);
+                          if ("https".equalsIgnoreCase(uri.getScheme()) &&
+                              "appassets.androidplatform.net".equalsIgnoreCase(uri.getHost())) return false;
                           return abrirLinkExterno(url);
                       }
                   });
-                  webView.loadUrl("file:///android_asset/index.html");
+                  webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
               }
 
               @Override
