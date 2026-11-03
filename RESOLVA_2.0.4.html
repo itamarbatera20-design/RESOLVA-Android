@@ -274,7 +274,8 @@ const CATEGORIAS=[
 ];
 
 const PBKDF2_ITERATIONS=210000;
-function contaAtual(){try{return JSON.parse(secureGetItem("resolva_conta_v1")||"null")}catch(e){return null}}
+let resolvaStorageIndisponivel=false;
+function contaAtual(){const bruto=secureGetItem("resolva_conta_v1");return bruto?JSON.parse(bruto):null}
 function sessaoAtiva(){try{return localStorage.getItem("resolva_sessao_v1")==="1" && localStorage.getItem("resolva_logout_v1")!=="1"}catch(e){return false}}
 function normalizarEmail(v){return String(v||"").trim().toLowerCase()}
 function cryptoDisponivel(){
@@ -426,11 +427,11 @@ function registrarEvento(texto){
 function normal(t){return (t||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
 function secureGetItem(key){
  const b=window.ResolvaSecureStorage;
- if(b){const v=b.getItem(key);if(v!==null&&v!==undefined)return v;const legacy=localStorage.getItem(key);if(legacy!==null){b.setItem(key,legacy);localStorage.removeItem(key);}return legacy;}
+ if(b){const v=b.getItem(key);if(v==="__RESOLVA_SECURE_STORAGE_ERROR__"){resolvaStorageIndisponivel=true;throw new Error("Falha ao abrir os dados protegidos.");}if(v!==null&&v!==undefined)return v;const legacy=localStorage.getItem(key);if(legacy!==null){b.setItem(key,legacy);localStorage.removeItem(key);}return legacy;}
  return localStorage.getItem(key);
 }
-function secureSetItem(key,value){const b=window.ResolvaSecureStorage;if(b){b.setItem(key,String(value));return;}localStorage.setItem(key,value);}
-function secureRemoveItem(key){const b=window.ResolvaSecureStorage;if(b){b.removeItem(key);return;}localStorage.removeItem(key);}
+function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){b.setItem(key,String(value));return;}localStorage.setItem(key,value);}
+function secureRemoveItem(key){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){b.removeItem(key);return;}localStorage.removeItem(key);}
 function salvarLocal(){try{
   const dados={...s}; delete dados.casos;
   secureSetItem("resolva_2_0",JSON.stringify(dados));
@@ -837,15 +838,14 @@ function novo(){
  tela("home");
 }
 function configuracoes(){tela('configuracoes');}
-carregarLocal();
-if(!Array.isArray(s.casos))s.casos=[];
-if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){const d={...s};delete d.casos;s.casos.push(d);try{secureSetItem("resolva_2_0_casos",JSON.stringify(s.casos))}catch(e){}}
-if(s.problema)document.getElementById("problem").value=s.problema;
-// Inicialização: somente uma tela fica visível. Após Sair, sempre voltar ao Login.
 try{
+ carregarLocal();
+ if(!Array.isArray(s.casos))s.casos=[];
+ if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){const d={...s};delete d.casos;s.casos.push(d);secureSetItem("resolva_2_0_casos",JSON.stringify(s.casos));}
+ if(s.problema)document.getElementById("problem").value=s.problema;
  if(localStorage.getItem("resolva_logout_v1")==="1"){mostrarLogin();}
  else{exigirLogin();}
-}catch(e){exigirLogin();}
+}catch(e){resolvaStorageIndisponivel=true;mostrarLogin("Não foi possível abrir os dados protegidos. Seus registros foram preservados; não crie outra conta nem limpe os dados do aplicativo. Tente novamente mais tarde.");}
 </script>
 </body>
 </html>
