@@ -178,8 +178,8 @@ jobs:
               }
               private final class SecureStorageBridge{
                   @JavascriptInterface public String getItem(String n){synchronized(MainActivity.this){try{String v=securePrefs.getString(n,null);return v==null?null:decrypt(v);}catch(Exception e){return "__RESOLVA_SECURE_STORAGE_ERROR__";}}}
-                  @JavascriptInterface public void setItem(String n,String v){synchronized(MainActivity.this){try{boolean ok=securePrefs.edit().putString(n,encrypt(v)).commit();if(!ok)throw new IllegalStateException("Falha ao gravar dados protegidos.");}catch(Exception e){throw new RuntimeException("Falha ao proteger dados.",e);}}}
-                  @JavascriptInterface public void removeItem(String n){synchronized(MainActivity.this){if(!securePrefs.edit().remove(n).commit())throw new RuntimeException("Falha ao remover dado protegido.");}}
+                  @JavascriptInterface public boolean setItem(String n,String v){synchronized(MainActivity.this){try{return securePrefs.edit().putString(n,encrypt(v)).commit();}catch(Exception e){return false;}}}
+                  @JavascriptInterface public boolean removeItem(String n){synchronized(MainActivity.this){try{return securePrefs.edit().remove(n).commit();}catch(Exception e){return false;}}}
               }
 
               private WebView webView;
