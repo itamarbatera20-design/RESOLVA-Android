@@ -430,7 +430,7 @@ function registrarEvento(texto){
 function normal(t){return (t||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
 function secureGetItem(key){
  const b=window.ResolvaSecureStorage;
- if(b){const v=b.getItem(key);if(v==="__RESOLVA_SECURE_STORAGE_ERROR__"){resolvaStorageIndisponivel=true;throw new Error("Falha ao abrir os dados protegidos.");}if(v!==null&&v!==undefined)return v;const legacy=localStorage.getItem(key);if(legacy!==null){b.setItem(key,legacy);localStorage.removeItem(key);}return legacy;}
+ if(b){const v=b.getItem(key);if(v==="__RESOLVA_SECURE_STORAGE_ERROR__"){resolvaStorageIndisponivel=true;throw new Error("Falha ao abrir os dados protegidos.");}if(v!==null&&v!==undefined)return v;const legacy=localStorage.getItem(key);if(legacy!==null){if(b.setItem(key,legacy)!==true)throw new Error("Não foi possível migrar os dados antigos com segurança.");localStorage.removeItem(key);}return legacy;}
  return localStorage.getItem(key);
 }
 function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.setItem(key,String(value))!==true)throw new Error("Não foi possível gravar os dados protegidos.");return;}localStorage.setItem(key,value);}
