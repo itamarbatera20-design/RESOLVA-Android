@@ -140,6 +140,47 @@ jobs:
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
           import android.webkit.WebResourceRequest;
+          import android.webkit.JavascriptInterface;
+          import android.content.SharedPreferences;
+          import android.security.keystore.KeyGenParameterSpec;
+          import android.security.keystore.KeyProperties;
+          import android.util.Base64;
+          import javax.crypto.Cipher;
+          import javax.crypto.KeyGenerator;
+          import javax.crypto.SecretKey;
+          import javax.crypto.spec.GCMParameterSpec;
+          import java.nio.charset.StandardCharsets;
+
+          public class MainActivity extends Activity {
+              private static final String PREFS_NAME = "resolva_secure_store";
+              private static final String KEY_ALIAS = "RESOLVA_DATA_AES_GCM_V1";
+              private SharedPreferences securePrefs;
+              private SecretKey getOrCreateKey() throws Exception {
+                  java.security.KeyStore ks=java.security.KeyStore.getInstance("AndroidKeyStore"); ks.load(null);
+                  java.security.Key k=ks.getKey(KEY_ALIAS,null); if(k instanceof SecretKey)return (SecretKey)k;
+                  KeyGenerator kg=KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES,"AndroidKeyStore");
+                  kg.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,KeyProperties.PURPOSE_ENCRYPT|KeyProperties.PURPOSE_DECRYPT)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                    .setRandomizedEncryptionRequired(true).build());
+                  return kg.generateKey();
+              }
+              private String encrypt(String v)throws Exception{
+                  Cipher c=Cipher.getInstance("AES/GCM/NoPadding");c.init(Cipher.ENCRYPT_MODE,getOrCreateKey());
+                  byte[] e=c.doFinal(v.getBytes(StandardCharsets.UTF_8)),iv=c.getIV(),p=new byte[1+iv.length+e.length];
+                  p[0]=(byte)iv.length;System.arraycopy(iv,0,p,1,iv.length);System.arraycopy(e,0,p,1+iv.length,e.length);
+                  return Base64.encodeToString(p,Base64.NO_WRAP);
+              }
+              private String decrypt(String v)throws Exception{
+                  byte[] p=Base64.decode(v,Base64.NO_WRAP);int n=p[0]&255;if(n<12||p.length<=1+n)throw new IllegalArgumentException("Dados inválidos");
+                  byte[] iv=new byte[n],e=new byte[p.length-1-n];System.arraycopy(p,1,iv,0,n);System.arraycopy(p,1+n,e,0,e.length);
+                  Cipher c=Cipher.getInstance("AES/GCM/NoPadding");c.init(Cipher.DECRYPT_MODE,getOrCreateKey(),new GCMParameterSpec(128,iv));
+                  return new String(c.doFinal(e),StandardCharsets.UTF_8);
+              }
+              private final class SecureStorageBridge{
+                  @JavascriptInterface public String getItem(String n){synchronized(MainActivity.this){try{String v=securePrefs.getString(n,null);return v==null?null:decrypt(v);}catch(Exception e){throw new RuntimeException("Falha ao abrir dados protegidos.",e);}}}
+                  @JavascriptInterface public void setItem(String n,String v){synchronized(MainActivity.this){try{securePrefs.edit().putString(n,encrypt(v)).commit();}catch(Exception e){throw new RuntimeException("Falha ao proteger dados.",e);}}}
+                  @JavascriptInterface public void removeItem(String n){synchronized(MainActivity.this){securePrefs.edit().remove(n).commit();}}
+              }
 
           public class MainActivity extends Activity {
 
@@ -149,8 +190,10 @@ jobs:
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
 
+                  securePrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                   webView = new WebView(this);
                   setContentView(webView);
+                  webView.addJavascriptInterface(new SecureStorageBridge(), "ResolvaSecureStorage");
 
                   WebSettings settings = webView.getSettings();
                   settings.setJavaScriptEnabled(true);
