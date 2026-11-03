@@ -414,11 +414,11 @@ function exigirLogin(){
 }
 function tela(id){
  if(!sessaoAtiva() && id!=="login" && id!=="cadastro"){mostrarLogin();return}
+ if(id!=="login" && id!=="cadastro" && !salvarLocal())return;
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  if(id==="home")atualizarPainel();
  scrollTo(0,0);
- salvarLocal();
 }
 function data(){return new Date().toLocaleDateString("pt-BR")}
 function registrarEvento(texto){
@@ -435,17 +435,20 @@ function secureGetItem(key){
 }
 function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.setItem(key,String(value))!==true)throw new Error("Não foi possível gravar os dados protegidos.");return;}localStorage.setItem(key,value);}
 function secureRemoveItem(key){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.removeItem(key)!==true)throw new Error("Não foi possível remover o dado protegido.");return;}localStorage.removeItem(key);}
-function salvarLocal(){if(resolvaStorageIndisponivel)return;try{
+function salvarLocal(){if(resolvaStorageIndisponivel)return false;try{
   const dados={...s}; delete dados.casos;
   secureSetItem("resolva_2_0",JSON.stringify(dados));
   if(s.protocolo){
-    const idx=s.casos.findIndex(c=>c.protocolo===s.protocolo);
-    if(idx>=0)s.casos[idx]=JSON.parse(JSON.stringify(dados));
-    else s.casos.push(JSON.parse(JSON.stringify(dados)));
-    secureSetItem("resolva_2_0_casos",JSON.stringify(s.casos));
+    const casosAnteriores=Array.isArray(s.casos)?s.casos.slice():[];
+    const idx=casosAnteriores.findIndex(c=>c.protocolo===s.protocolo);
+    if(idx>=0)casosAnteriores[idx]=JSON.parse(JSON.stringify(dados));
+    else casosAnteriores.push(JSON.parse(JSON.stringify(dados)));
+    secureSetItem("resolva_2_0_casos",JSON.stringify(casosAnteriores));
+    s.casos=casosAnteriores;
   }
   atualizarPainel();
-}catch(e){resolvaStorageIndisponivel=true;alert("Não foi possível confirmar o salvamento dos dados protegidos. Evite fechar o aplicativo ou criar novos registros. Seus dados anteriores não foram apagados.");}}
+  return true;
+}catch(e){resolvaStorageIndisponivel=true;alert("Não foi possível confirmar o salvamento dos dados protegidos. A ação foi interrompida; evite fechar o aplicativo. Seus dados anteriores não foram apagados.");return false;}}
 function limparEventosDuplicados(c){
   if(!c || !Array.isArray(c.eventos))return c;
   const vistos=new Set();
@@ -488,7 +491,7 @@ function meusCasos(){
   }
   tela("meusCasos");
 }
-function abrirCaso(i){const c=window._listaCasos[i];if(!c)return;Object.assign(s,JSON.parse(JSON.stringify(c)));salvarLocal();caso();}
+function abrirCaso(i){const c=window._listaCasos[i];if(!c)return;const anterior=JSON.parse(JSON.stringify(s));Object.assign(s,JSON.parse(JSON.stringify(c)));if(!salvarLocal()){Object.assign(s,anterior);return}caso();}
 function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 
 function detectar(t){
@@ -657,7 +660,7 @@ async function copiar(){
  }
 }
 
-function enviar(){registrarEvento("Mensagem enviada");s.status="aguardando";salvarLocal();caso()}
+function enviar(){registrarEvento("Mensagem enviada");s.status="aguardando";if(!salvarLocal())return;caso()}
 
 function caso(){
  document.getElementById("protocolo").textContent=s.protocolo||"—";
@@ -675,7 +678,7 @@ function caso(){
 function salvarProt(){
  s.protEmpresa=document.getElementById("protEmpresa").value.trim();
  if(!s.protEmpresa){alert("Digite o protocolo oficial.");return}
- registrarEvento("Protocolo oficial da empresa registrado");linha();salvarLocal();alert("Protocolo oficial registrado.");
+ registrarEvento("Protocolo oficial da empresa registrado");if(!salvarLocal())return;linha();alert("Protocolo oficial registrado.");
 }
 
 function formatarDataISO(iso){
@@ -704,7 +707,7 @@ function salvarPrazo(){
  if(!valor){alert("Escolha a data prevista para a resposta da empresa.");return}
  s.prazoResposta=valor;
  registrarEvento("Prazo de resposta registrado: "+formatarDataISO(valor));
- salvarLocal(); atualizarPrazo(); caso();
+ if(!salvarLocal())return; atualizarPrazo(); caso();
 }
 
 function linha(){document.getElementById("linha").innerHTML=s.eventos.map(e=>'<div class="event"><b>✓ '+esc(e[0])+"</b><div class='small'>"+esc(e[1])+"</div></div>").join("")}
@@ -713,7 +716,7 @@ function responder(t){
  if(t==="aguardando"){
    s.status="aguardando";
    registrarEvento("Usuário informou que ainda aguarda resposta");
-   linha();salvarLocal();caso();alert("Caso mantido como aguardando resposta.");
+   linha();if(!salvarLocal())return;caso();alert("Caso mantido como aguardando resposta.");
    return;
  }
  if(t==="resolvido"){
@@ -721,12 +724,12 @@ function responder(t){
    registrarEvento("Empresa respondeu e problema foi resolvido");
    document.getElementById("status").textContent="🟢 Problema resolvido";
    document.getElementById("bar").style.width="100%";
-   estrelas();salvarLocal();tela("resolvido");return;
+   estrelas();if(!salvarLocal())return;tela("resolvido");return;
  }
  s.status="nao";
  document.getElementById("respostaTexto").value="";
  document.getElementById("protResposta").value=s.protEmpresa||"";
- salvarLocal();tela("resposta");
+ if(!salvarLocal())return;tela("resposta");
 }
 
 function analisarResposta(){
@@ -736,7 +739,7 @@ function analisarResposta(){
  registrarEvento("Resposta da empresa registrada");
  registrarEvento("Empresa respondeu, mas problema não foi resolvido");
  document.getElementById("continuaTexto").textContent="A resposta foi registrada e o histórico do caso foi mantido. O próximo passo é continuar a resolução.";
- salvarLocal();tela("continua");
+ if(!salvarLocal())return;tela("continua");
 }
 
 function rota(){
@@ -807,7 +810,7 @@ function encaminhamento(){
      b.title="O canal depende do órgão, localidade ou instituição. O RESOLVA não inventa um endereço.";
    }
  }
- salvarLocal();tela("encaminhamento");
+ if(!salvarLocal())return;tela("encaminhamento");
 }
 
 function abrirCanal(){
@@ -827,18 +830,19 @@ function selecionarNota(n){
  [1,2,3,4,5].forEach(i=>document.getElementById("star"+i).classList.toggle("selected",i===n));
  document.getElementById("notaTexto").textContent="Avaliação selecionada: "+n+" estrela"+(n>1?"s":"")+"★";
  document.getElementById("salvarAvaliacao").disabled=false;
- salvarLocal();
+ if(!salvarLocal())return;
 }
 function salvar(){
  if(!s.nota){alert("Escolha uma nota antes de salvar.");return}
  s.eventos.push(["Avaliação registrada: "+s.nota+" estrela"+(s.nota>1?"s":""),data()]);
- salvarLocal();alert("Avaliação registrada. Obrigado!");novo();
+ if(!salvarLocal())return;alert("Avaliação registrada. Obrigado!");novo();
 }
 function novo(){
  if(resolvaStorageIndisponivel){alert("Os dados protegidos estão indisponíveis. Nenhum registro foi apagado.");return}
+ try{secureRemoveItem("resolva_2_0");}catch(e){resolvaStorageIndisponivel=true;alert("Não foi possível preparar um novo caso com segurança. Nenhum registro foi apagado.");return;}
  Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,status:"",canalUrl:"",origemMensagem:"caminho"});
- secureRemoveItem("resolva_2_0")
  document.getElementById("problem").value="";
+ if(!salvarLocal())return;
  tela("home");
 }
 function configuracoes(){tela('configuracoes');}
