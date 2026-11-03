@@ -433,8 +433,8 @@ function secureGetItem(key){
  if(b){const v=b.getItem(key);if(v==="__RESOLVA_SECURE_STORAGE_ERROR__"){resolvaStorageIndisponivel=true;throw new Error("Falha ao abrir os dados protegidos.");}if(v!==null&&v!==undefined)return v;const legacy=localStorage.getItem(key);if(legacy!==null){b.setItem(key,legacy);localStorage.removeItem(key);}return legacy;}
  return localStorage.getItem(key);
 }
-function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){b.setItem(key,String(value));return;}localStorage.setItem(key,value);}
-function secureRemoveItem(key){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){b.removeItem(key);return;}localStorage.removeItem(key);}
+function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.setItem(key,String(value))!==true)throw new Error("Não foi possível gravar os dados protegidos.");return;}localStorage.setItem(key,value);}
+function secureRemoveItem(key){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.removeItem(key)!==true)throw new Error("Não foi possível remover o dado protegido.");return;}localStorage.removeItem(key);}
 function salvarLocal(){if(resolvaStorageIndisponivel)return;try{
   const dados={...s}; delete dados.casos;
   secureSetItem("resolva_2_0",JSON.stringify(dados));
