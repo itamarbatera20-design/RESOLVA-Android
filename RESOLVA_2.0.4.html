@@ -840,7 +840,6 @@ function salvar(){
 }
 function novo(){
  if(resolvaStorageIndisponivel){alert("Os dados protegidos estão indisponíveis. Nenhum registro foi apagado.");return}
- try{secureRemoveItem("resolva_2_0");}catch(e){resolvaStorageIndisponivel=true;alert("Não foi possível preparar um novo caso com segurança. Nenhum registro foi apagado.");return;}
  Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,status:"",canalUrl:"",origemMensagem:"caminho"});
  document.getElementById("problem").value="";
  if(!salvarLocal())return;
