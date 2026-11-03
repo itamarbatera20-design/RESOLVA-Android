@@ -742,7 +742,7 @@ function encaminhamento(){
 
 function abrirCanal(){
  const r=rota();
- if(r.url)window.open(r.url,"_blank");
+ if(r.url)window.location.href=r.url;
  else alert("O RESOLVA não encontrou um endereço oficial específico nesta versão. Confira o canal oficial do órgão/empresa indicado antes de acessar.");
 }
 
