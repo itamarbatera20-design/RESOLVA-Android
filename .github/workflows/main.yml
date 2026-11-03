@@ -182,8 +182,6 @@ jobs:
                   @JavascriptInterface public void removeItem(String n){synchronized(MainActivity.this){securePrefs.edit().remove(n).commit();}}
               }
 
-          public class MainActivity extends Activity {
-
               private WebView webView;
 
               @Override
