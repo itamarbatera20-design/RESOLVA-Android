@@ -149,7 +149,7 @@ function resolvaRenderMessage(text) {
 
 <section id="ajuda" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>❓ Ajuda</h2><p>Como o RESOLVA funciona:</p><div class="card"><b>📝 1. Conte o problema</b><p>Descreva o que aconteceu.</p><b>🧭 2. Encontre seu caminho</b><p>O RESOLVA ajuda a identificar o próximo passo.</p><b>📂 3. Acompanhe em Meus Casos</b><p>Consulte o andamento e o histórico do caso.</p><b>💬 4. Registre as respostas</b><p>Informe quando a empresa responder e se o problema foi resolvido.</p></div></section>
 
-<section id="configuracoes" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>⚙️ Configurações</h2><p>Configurações do RESOLVA.</p><div class="card"><b>👤 Conta</b><p class="account-info" id="contaInfo"></p><button class="secondary" onclick="sair()">SAIR DA CONTA</button></div><div class="card"><b>🔒 Dados locais</b><p class="small">Nesta versão de teste, a conta e os casos ficam armazenados localmente neste navegador.</p></div></section>
+<section id="configuracoes" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>⚙️ Configurações</h2><p>Configurações do RESOLVA.</p><div class="card"><b>👤 Conta</b><p class="account-info" id="contaInfo"></p><button class="secondary" onclick="sair()">SAIR DA CONTA</button></div><div class="card"><b>🔒 Dados locais</b><p class="small">Sua conta e seus registros ficam armazenados neste aparelho. Os dados dos casos são protegidos por criptografia no Android. Não há sincronização com a internet nem recuperação de senha nesta versão.</p></div><div class="card"><b>⚠️ Excluir conta e dados</b><p class="small">Essa ação apaga permanentemente a conta deste aparelho e todos os casos e históricos salvos nela. Não será possível recuperar essas informações.</p><button class="danger" onclick="excluirConta()">EXCLUIR MINHA CONTA E DADOS</button></div></section>
 
 <section id="meusCasos" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>📂 Meus casos</h2><p>Veja os problemas já registrados e retome o caso que quiser.</p><div id="listaCasos"></div></section>
 
@@ -407,6 +407,20 @@ function sair(){
  document.getElementById("appHeader").style.display="none";
  document.getElementById("menuPanel").classList.remove("open");
  mostrarLogin("Você saiu da sua conta. Entre novamente para continuar.");
+}
+function excluirConta(){
+ if(!sessaoAtiva()){alert("Entre na sua conta para solicitar a exclusão.");return;}
+ const confirmou=confirm("Tem certeza de que deseja excluir sua conta do RESOLVA neste aparelho?\n\nTodos os casos e históricos serão apagados permanentemente. Essa ação não pode ser desfeita.");
+ if(!confirmou)return;
+ try{
+  ["resolva_2_0_bundle","resolva_2_0","resolva_2_0_casos","resolva_conta_v1"].forEach(secureRemoveItem);
+  localStorage.removeItem("resolva_sessao_v1");
+  localStorage.removeItem("resolva_logout_v1");
+  alert("Sua conta e os dados locais foram excluídos deste aparelho.");
+  window.location.reload();
+ }catch(e){
+  alert("Não foi possível concluir a exclusão com segurança. Nenhuma confirmação de exclusão foi registrada. Tente novamente; se o problema continuar, entre em contato com suporte.resolva@gmail.com.");
+ }
 }
 function exigirLogin(){
  if(sessaoAtiva() && contaAtual()){abrirApp();return true}
