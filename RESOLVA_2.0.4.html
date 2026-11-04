@@ -109,7 +109,7 @@ function resolvaRenderMessage(text) {
 <section id="login" class="screen active auth-screen">
 <div class="auth-card">
 <div class="brand-cover"><div class="brand-lockup"><img class="brand-symbol" src="brand-resolva.svg" alt="Símbolo RESOLVA"><div><div class="brand-name">RESOLVA</div><div class="brand-slogan">Você conta o problema.<br>A gente mostra o caminho.</div></div></div></div>
-<p>Entre para registrar problemas e acompanhar seus casos neste aparelho.</p><div class="auth-note">🔒 Versão offline: seus dados ficam salvos localmente neste dispositivo.</div>
+<p>Entre para registrar problemas e acompanhar seus casos neste aparelho.</p><div class="auth-note">🔒 Versão offline: no Android, os registros dos casos são criptografados no aparelho com uma chave protegida pelo sistema.</div>
 <label class="label">E-mail</label>
 <input id="loginEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
 <label class="label">Senha</label>
@@ -125,11 +125,11 @@ function resolvaRenderMessage(text) {
 <div class="auth-card">
 <button class="back" onclick="mostrarLogin()">← Voltar</button>
 <h1>Criar conta</h1>
-<p>Crie seu acesso local para organizar seus problemas neste aparelho.</p><div class="auth-note">Esta versão ainda não sincroniza dados pela internet nem envia recuperação de senha por e-mail.</div>
+<p>Crie seu acesso local para organizar seus problemas neste aparelho.</p><div class="auth-note">A senha é protegida por derivação criptográfica neste aparelho. Esta versão ainda não sincroniza dados nem envia recuperação por e-mail.</div>
 <label class="label">E-mail</label>
 <input id="cadEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
 <label class="label">Senha</label>
-<div class="password-wrap"><input id="cadSenha" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha',this)" aria-label="Mostrar senha">👁️</button></div>
+<div class="password-wrap"><input id="cadSenha" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha',this)" aria-label="Mostrar senha">👁️</button></div>
 <label class="label">Confirmar senha</label>
 <div class="password-wrap"><input id="cadSenha2" type="password" autocomplete="new-password" placeholder="Digite a senha novamente"><button type="button" class="eye-btn" onclick="alternarSenha('cadSenha2',this)" aria-label="Mostrar senha">👁️</button></div>
 <button onclick="criarConta()">CRIAR CONTA</button>
@@ -149,7 +149,9 @@ function resolvaRenderMessage(text) {
 
 <section id="ajuda" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>❓ Ajuda</h2><p>Como o RESOLVA funciona:</p><div class="card"><b>📝 1. Conte o problema</b><p>Descreva o que aconteceu.</p><b>🧭 2. Encontre seu caminho</b><p>O RESOLVA ajuda a identificar o próximo passo.</p><b>📂 3. Acompanhe em Meus Casos</b><p>Consulte o andamento e o histórico do caso.</p><b>💬 4. Registre as respostas</b><p>Informe quando a empresa responder e se o problema foi resolvido.</p></div></section>
 
-<section id="configuracoes" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>⚙️ Configurações</h2><p>Configurações do RESOLVA.</p><div class="card"><b>👤 Conta</b><p class="account-info" id="contaInfo"></p><button class="secondary" onclick="sair()">SAIR DA CONTA</button></div><div class="card"><b>🔒 Dados locais</b><p class="small">Nesta versão de teste, a conta e os casos ficam armazenados localmente neste navegador.</p></div></section>
+<section id="configuracoes" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>⚙️ Configurações</h2><p>Configurações do RESOLVA.</p><div class="card"><b>👤 Conta</b><p class="account-info" id="contaInfo"></p><button class="secondary" onclick="sair()">SAIR DA CONTA</button></div><div class="card"><b>🔒 Dados locais</b><p class="small">Sua conta e seus registros ficam armazenados neste aparelho. Os dados dos casos são protegidos por criptografia no Android. Não há sincronização com a internet nem recuperação de senha nesta versão.</p></div><div class="card"><b>🛡️ Privacidade</b><p class="small">Veja como seus dados são utilizados, protegidos e excluídos.</p><button class="secondary" onclick="tela('privacidade')">LER POLÍTICA DE PRIVACIDADE</button></div><div class="card"><b>⚠️ Excluir conta e dados</b><p class="small">Essa ação apaga permanentemente a conta deste aparelho e todos os casos e históricos salvos nela. Não será possível recuperar essas informações.</p><button class="danger" onclick="excluirConta()">EXCLUIR MINHA CONTA E DADOS</button></div></section>
+
+<section id="privacidade" class="screen"><button class="back" onclick="tela('configuracoes')">← Voltar</button><h2>🛡️ Política de Privacidade</h2><p><b>Última atualização: 4 de novembro de 2026</b></p><div class="card"><b>Dados utilizados</b><p>O e-mail identifica sua conta local. Você também pode registrar descrições de problemas, empresas, protocolos, prazos, respostas e anotações.</p><b>Armazenamento e proteção</b><p>Os dados ficam neste aparelho. No Android, os registros dos casos são criptografados com uma chave protegida pelo Android Keystore. A senha é protegida por derivação criptográfica com salt. Não existe conta online nesta versão.</p><b>Transmissão e compartilhamento</b><p>O RESOLVA não possui sincronização, servidor próprio de contas nem recuperação de senha por e-mail. Não vende dados pessoais. Se você abrir um canal oficial e enviar informações nele, o tratamento será feito pelo serviço externo, conforme suas próprias regras.</p><b>Conexão</b><p>A internet permite abrir páginas HTTPS dos canais oficiais escolhidos pelo usuário. Isso não significa que seus casos sejam enviados ao RESOLVA.</p><b>Retenção e exclusão</b><p>Os dados ficam no aparelho até serem excluídos pelo usuário ou removidos com a desinstalação, observadas as regras do Android. Em Configurações, use “Excluir minha conta e dados” para apagar permanentemente a conta local e os registros deste aparelho.</p><b>Segurança e limitações</b><p>A criptografia protege os dados armazenados, mas não impede o acesso enquanto o aparelho estiver desbloqueado e o aplicativo aberto. Não há recuperação de senha nesta versão.</p><b>Versão pública desta política</b><p><a href="https://itamarbatera20-design.github.io/RESOLVA-Android/politica-de-privacidade.html" target="_blank" rel="noopener">Consultar a política de privacidade completa</a></p><b>Contato</b><p>Dúvidas: suporte.resolva@gmail.com</p></div></section>
 
 <section id="meusCasos" class="screen"><button class="back" onclick="tela('home')">← Voltar</button><h2>📂 Meus casos</h2><p>Veja os problemas já registrados e retome o caso que quiser.</p><div id="listaCasos"></div></section>
 
@@ -273,9 +275,50 @@ const CATEGORIAS=[
 "Trabalho / Serviços profissionais","Contratos / Serviços","Outro"
 ];
 
-function contaAtual(){try{return JSON.parse(localStorage.getItem("resolva_conta_v1")||"null")}catch(e){return null}}
+const PBKDF2_ITERATIONS=210000;
+let resolvaStorageIndisponivel=false;
+function contaAtual(){const bruto=secureGetItem("resolva_conta_v1");return bruto?JSON.parse(bruto):null}
 function sessaoAtiva(){try{return localStorage.getItem("resolva_sessao_v1")==="1" && localStorage.getItem("resolva_logout_v1")!=="1"}catch(e){return false}}
 function normalizarEmail(v){return String(v||"").trim().toLowerCase()}
+function cryptoDisponivel(){
+ return !!(window.crypto && window.crypto.subtle && window.crypto.getRandomValues);
+}
+function bytesParaHex(bytes){
+ return Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function hexParaBytes(hex){
+ if(!/^(?:[0-9a-f]{2})+$/i.test(hex||""))throw new Error("Formato criptográfico inválido.");
+ return new Uint8Array(hex.match(/.{2}/g).map(b=>parseInt(b,16)));
+}
+async function derivarSenha(senha,saltHex,iteracoes){
+ if(!cryptoDisponivel())throw new Error("Este aparelho não oferece suporte à proteção criptográfica necessária. Atualize o Android System WebView e tente novamente.");
+ const material=await crypto.subtle.importKey("raw",new TextEncoder().encode(senha),"PBKDF2",false,["deriveBits"]);
+ const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt:hexParaBytes(saltHex),iterations:iteracoes,hash:"SHA-256"},material,256);
+ return bytesParaHex(bits);
+}
+async function criarCredencial(senha){
+ if(!cryptoDisponivel())throw new Error("Não foi possível ativar a proteção criptográfica neste aparelho. Nenhuma senha foi salva.");
+ const salt=new Uint8Array(16);crypto.getRandomValues(salt);
+ const saltHex=bytesParaHex(salt);
+ return {email:normalizarEmail(document.getElementById("cadEmail").value),passwordHash:await derivarSenha(senha,saltHex,PBKDF2_ITERATIONS),salt:saltHex,kdf:"PBKDF2-SHA-256",iterations:PBKDF2_ITERATIONS,credentialVersion:2};
+}
+async function validarCredencial(conta,senha){
+ if(conta && conta.kdf==="PBKDF2-SHA-256" && conta.passwordHash && conta.salt){
+  const derivada=await derivarSenha(senha,conta.salt,Number(conta.iterations)||PBKDF2_ITERATIONS);
+  if(derivada.length!==conta.passwordHash.length)return false;
+  let diferenca=0;for(let i=0;i<derivada.length;i++)diferenca|=derivada.charCodeAt(i)^conta.passwordHash.charCodeAt(i);
+  return diferenca===0;
+ }
+ // Migração de contas antigas: validar uma única vez e substituir a senha em texto puro.
+ if(conta && typeof conta.senha==="string" && conta.senha===senha){
+  const salt=new Uint8Array(16);crypto.getRandomValues(salt);
+  const saltHex=bytesParaHex(salt);
+  const atualizada={email:conta.email,passwordHash:await derivarSenha(senha,saltHex,PBKDF2_ITERATIONS),salt:saltHex,kdf:"PBKDF2-SHA-256",iterations:PBKDF2_ITERATIONS,credentialVersion:2};
+  secureSetItem("resolva_conta_v1",JSON.stringify(atualizada));
+  return true;
+ }
+ return false;
+}
 function mostrarLogin(msg){
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
  document.getElementById("login").classList.add("active");
@@ -298,28 +341,50 @@ function esqueciSenha(){
  const conta=contaAtual();
  if(!conta){document.getElementById("loginMsg").textContent="Nenhuma conta foi encontrada neste navegador.";return}
  if(email && email!==conta.email){document.getElementById("loginMsg").textContent="Esse e-mail não corresponde à conta deste navegador.";return}
- document.getElementById("loginMsg").textContent="Nesta versão de teste, a recuperação de senha ainda é local. Na versão com servidor, enviaremos um link de recuperação para o e-mail cadastrado.";
+ document.getElementById("loginMsg").textContent="A recuperação de senha ainda não está disponível nesta versão offline. Guarde sua senha em local seguro: não será possível redefini-la pelo aplicativo.";
 }
-function criarConta(){
+async function criarConta(){
  const email=normalizarEmail(document.getElementById("cadEmail").value);
  const senha=document.getElementById("cadSenha").value;
  const senha2=document.getElementById("cadSenha2").value;
  const msg=document.getElementById("cadMsg");
  if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent="Informe um e-mail válido.";return}
- if(senha.length<6){msg.textContent="A senha precisa ter pelo menos 6 caracteres.";return}
+ if(senha.length<8){msg.textContent="Use uma senha com pelo menos 8 caracteres.";return}
  if(senha!==senha2){msg.textContent="As senhas não conferem.";return}
- if(contaAtual()){msg.textContent="Já existe uma conta neste navegador. Entre com ela ou saia dela antes de criar outra.";return}
- try{localStorage.setItem("resolva_conta_v1",JSON.stringify({email:email,senha:senha}));localStorage.setItem("resolva_sessao_v1","1");localStorage.removeItem("resolva_logout_v1");abrirApp();}
- catch(e){msg.textContent="Não foi possível salvar a conta neste navegador.";}
+ if(resolvaStorageIndisponivel){msg.textContent="Os dados protegidos não puderam ser abertos. Não é seguro criar outra conta neste momento.";return}
+ let contaExistente;try{contaExistente=contaAtual()}catch(e){resolvaStorageIndisponivel=true;msg.textContent="Não foi possível abrir os dados protegidos. Nenhuma informação foi alterada.";return}
+ if(contaExistente){msg.textContent="Já existe uma conta neste aparelho. Entre com ela ou saia antes de criar outra.";return}
+ const botao=document.querySelector("#cadastro button[onclick='criarConta()']");
+ if(botao)botao.disabled=true;
+ msg.textContent="Protegendo sua senha...";
+ try{
+  const credencial=await criarCredencial(senha);
+  secureSetItem("resolva_conta_v1",JSON.stringify(credencial));
+  localStorage.setItem("resolva_sessao_v1","1");
+  localStorage.removeItem("resolva_logout_v1");
+  abrirApp();
+ }catch(e){msg.textContent=e && e.message ? e.message : "Não foi possível criar a conta com segurança neste aparelho.";}
+ finally{if(botao)botao.disabled=false;}
 }
-function entrar(){
+async function entrar(){
  const email=normalizarEmail(document.getElementById("loginEmail").value);
  const senha=document.getElementById("loginSenha").value;
- const conta=contaAtual();
  const msg=document.getElementById("loginMsg");
- if(!conta){msg.textContent="Você ainda não criou uma conta neste navegador.";return}
- if(email!==conta.email || senha!==conta.senha){msg.textContent="E-mail ou senha incorretos.";return}
- localStorage.setItem("resolva_sessao_v1","1");localStorage.removeItem("resolva_logout_v1");abrirApp();
+ if(resolvaStorageIndisponivel){msg.textContent="Os dados protegidos não puderam ser abertos. Seus registros foram preservados; tente novamente mais tarde.";return}
+ let conta;try{conta=contaAtual()}catch(e){resolvaStorageIndisponivel=true;msg.textContent="Não foi possível abrir os dados protegidos. Seus registros não foram alterados.";return}
+ if(!conta){msg.textContent="Você ainda não criou uma conta neste aparelho.";return}
+ if(email!==conta.email){msg.textContent="E-mail ou senha incorretos.";return}
+ const botao=document.querySelector("#login button[onclick='entrar()']");
+ if(botao)botao.disabled=true;
+ msg.textContent="Verificando acesso...";
+ try{
+  const valido=await validarCredencial(conta,senha);
+  if(!valido){msg.textContent="E-mail ou senha incorretos.";return}
+  localStorage.setItem("resolva_sessao_v1","1");
+  localStorage.removeItem("resolva_logout_v1");
+  abrirApp();
+ }catch(e){msg.textContent=e && e.message ? e.message : "Não foi possível verificar a senha neste aparelho.";}
+ finally{if(botao)botao.disabled=false;}
 }
 function atualizarPainel(){
  const elTotal=document.getElementById("totalCasos");if(!elTotal)return;
@@ -345,17 +410,37 @@ function sair(){
  document.getElementById("menuPanel").classList.remove("open");
  mostrarLogin("Você saiu da sua conta. Entre novamente para continuar.");
 }
+function excluirConta(){
+  if(!sessaoAtiva()){alert("Entre na sua conta para solicitar a exclusão.");return;}
+  const confirmou=confirm("Tem certeza de que deseja excluir sua conta do RESOLVA neste aparelho?\\n\\nTodos os casos e históricos serão apagados permanentemente. Essa ação não pode ser desfeita.");
+  if(!confirmou)return;
+  try{
+   const bridge=window.ResolvaSecureStorage;
+   if(bridge){
+    if(typeof bridge.clearAll!=="function" || bridge.clearAll()!==true)throw new Error("Falha ao limpar o armazenamento protegido.");
+   }
+   ["resolva_2_0_bundle","resolva_2_0","resolva_2_0_casos","resolva_conta_v1","resolva_sessao_v1","resolva_logout_v1"].forEach(k=>localStorage.removeItem(k));
+   localStorage.removeItem("resolva_logout_v1");
+   alert("Sua conta e os dados locais foram excluídos deste aparelho.");
+   window.location.reload();
+  }catch(e){
+   alert("Não foi possível confirmar a exclusão completa. Verifique o armazenamento e tente novamente; se o problema continuar, entre em contato com suporte.resolva@gmail.com.");
+  }
+ }catch(e){
+  alert("Não foi possível concluir a exclusão com segurança. Nenhuma confirmação de exclusão foi registrada. Tente novamente; se o problema continuar, entre em contato com suporte.resolva@gmail.com.");
+ }
+}
 function exigirLogin(){
  if(sessaoAtiva() && contaAtual()){abrirApp();return true}
  mostrarLogin();return false;
 }
 function tela(id){
  if(!sessaoAtiva() && id!=="login" && id!=="cadastro"){mostrarLogin();return}
+ if(id!=="login" && id!=="cadastro" && !salvarLocal())return;
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  if(id==="home")atualizarPainel();
  scrollTo(0,0);
- salvarLocal();
 }
 function data(){return new Date().toLocaleDateString("pt-BR")}
 function registrarEvento(texto){
@@ -365,17 +450,27 @@ function registrarEvento(texto){
   if(!existe)s.eventos.push([texto,hoje]);
 }
 function normal(t){return (t||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
-function salvarLocal(){try{
+function secureGetItem(key){
+ const b=window.ResolvaSecureStorage;
+ if(b){const v=b.getItem(key);if(v==="__RESOLVA_SECURE_STORAGE_ERROR__"){resolvaStorageIndisponivel=true;throw new Error("Falha ao abrir os dados protegidos.");}if(v!==null&&v!==undefined)return v;const legacy=localStorage.getItem(key);if(legacy!==null){if(b.setItem(key,legacy)!==true)throw new Error("Não foi possível migrar os dados antigos com segurança.");localStorage.removeItem(key);}return legacy;}
+ return localStorage.getItem(key);
+}
+function secureSetItem(key,value){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.setItem(key,String(value))!==true)throw new Error("Não foi possível gravar os dados protegidos.");return;}localStorage.setItem(key,value);}
+function secureRemoveItem(key){if(resolvaStorageIndisponivel)throw new Error("Armazenamento protegido indisponível.");const b=window.ResolvaSecureStorage;if(b){if(b.removeItem(key)!==true)throw new Error("Não foi possível remover o dado protegido.");return;}localStorage.removeItem(key);}
+function salvarLocal(){if(resolvaStorageIndisponivel)return false;try{
   const dados={...s}; delete dados.casos;
-  localStorage.setItem("resolva_2_0",JSON.stringify(dados));
+  const casosAtualizados=Array.isArray(s.casos)?s.casos.slice():[];
   if(s.protocolo){
-    const idx=s.casos.findIndex(c=>c.protocolo===s.protocolo);
-    if(idx>=0)s.casos[idx]=JSON.parse(JSON.stringify(dados));
-    else s.casos.push(JSON.parse(JSON.stringify(dados)));
-    localStorage.setItem("resolva_2_0_casos",JSON.stringify(s.casos));
+    const idx=casosAtualizados.findIndex(c=>c.protocolo===s.protocolo);
+    if(idx>=0)casosAtualizados[idx]=JSON.parse(JSON.stringify(dados));
+    else casosAtualizados.push(JSON.parse(JSON.stringify(dados)));
   }
+  // Estado atual e histórico são gravados juntos em uma única operação criptografada.
+  secureSetItem("resolva_2_0_bundle",JSON.stringify({estado:dados,casos:casosAtualizados}));
+  s.casos=casosAtualizados;
   atualizarPainel();
-}catch(e){}}
+  return true;
+}catch(e){resolvaStorageIndisponivel=true;alert("Não foi possível confirmar o salvamento dos dados protegidos. A ação foi interrompida; evite fechar o aplicativo. Seus dados anteriores não foram apagados.");return false;}}
 function limparEventosDuplicados(c){
   if(!c || !Array.isArray(c.eventos))return c;
   const vistos=new Set();
@@ -386,10 +481,24 @@ function limparEventosDuplicados(c){
   });
   return c;
 }
-function carregarLocal(){try{
-  const x=localStorage.getItem("resolva_2_0");if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));
-  const cs=localStorage.getItem("resolva_2_0_casos");if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados);
-}catch(e){}}
+function carregarLocal(){
+  const pacote=secureGetItem("resolva_2_0_bundle");
+  if(pacote){
+    const salvo=JSON.parse(pacote);
+    if(salvo.estado)Object.assign(s,limparEventosDuplicados(salvo.estado));
+    if(Array.isArray(salvo.casos))s.casos=salvo.casos.map(limparEventosDuplicados);
+    return;
+  }
+  // Migração compatível: lê os dois formatos antigos e preserva as chaves legadas.
+  const x=secureGetItem("resolva_2_0");
+  const cs=secureGetItem("resolva_2_0_casos");
+  if(x)Object.assign(s,limparEventosDuplicados(JSON.parse(x)));
+  if(cs)s.casos=JSON.parse(cs).map(limparEventosDuplicados);
+  if(x||cs){
+    const dados={...s};delete dados.casos;
+    secureSetItem("resolva_2_0_bundle",JSON.stringify({estado:dados,casos:Array.isArray(s.casos)?s.casos:[]}));
+  }
+}
 function ajuda(){fecharMenu();tela("ajuda")}
 function sairDoMenu(){fecharMenu();sair()}
 function toggleMenu(){document.getElementById("menuPanel").classList.toggle("open")}
@@ -418,8 +527,8 @@ function meusCasos(){
   }
   tela("meusCasos");
 }
-function abrirCaso(i){const c=window._listaCasos[i];if(!c)return;Object.assign(s,JSON.parse(JSON.stringify(c)));salvarLocal();caso();}
-function esc(x){return String(x||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function abrirCaso(i){const c=window._listaCasos[i];if(!c)return;const anterior=JSON.parse(JSON.stringify(s));Object.assign(s,JSON.parse(JSON.stringify(c)));if(!salvarLocal()){Object.assign(s,anterior);return}caso();}
+function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 
 function detectar(t){
  const x=normal(t);
@@ -492,9 +601,10 @@ function corrigirCategoria(){
 }
 function aplicarCategoria(){
  const v=document.getElementById("categoriaManual").value;
+ const anterior=s.categoria, manualAnterior=s.categoriaManual;
  s.categoria=v;
  s.categoriaManual=true;
- salvarLocal();
+ if(!salvarLocal()){s.categoria=anterior;s.categoriaManual=manualAnterior;return;}
  montar();
 }
 
@@ -587,7 +697,7 @@ async function copiar(){
  }
 }
 
-function enviar(){registrarEvento("Mensagem enviada");s.status="aguardando";salvarLocal();caso()}
+function enviar(){registrarEvento("Mensagem enviada");s.status="aguardando";if(!salvarLocal())return;caso()}
 
 function caso(){
  document.getElementById("protocolo").textContent=s.protocolo||"—";
@@ -605,7 +715,7 @@ function caso(){
 function salvarProt(){
  s.protEmpresa=document.getElementById("protEmpresa").value.trim();
  if(!s.protEmpresa){alert("Digite o protocolo oficial.");return}
- registrarEvento("Protocolo oficial da empresa registrado");linha();salvarLocal();alert("Protocolo oficial registrado.");
+ registrarEvento("Protocolo oficial da empresa registrado");if(!salvarLocal())return;linha();alert("Protocolo oficial registrado.");
 }
 
 function formatarDataISO(iso){
@@ -634,7 +744,7 @@ function salvarPrazo(){
  if(!valor){alert("Escolha a data prevista para a resposta da empresa.");return}
  s.prazoResposta=valor;
  registrarEvento("Prazo de resposta registrado: "+formatarDataISO(valor));
- salvarLocal(); atualizarPrazo(); caso();
+ if(!salvarLocal())return; atualizarPrazo(); caso();
 }
 
 function linha(){document.getElementById("linha").innerHTML=s.eventos.map(e=>'<div class="event"><b>✓ '+esc(e[0])+"</b><div class='small'>"+esc(e[1])+"</div></div>").join("")}
@@ -643,7 +753,7 @@ function responder(t){
  if(t==="aguardando"){
    s.status="aguardando";
    registrarEvento("Usuário informou que ainda aguarda resposta");
-   linha();salvarLocal();caso();alert("Caso mantido como aguardando resposta.");
+   linha();if(!salvarLocal())return;caso();alert("Caso mantido como aguardando resposta.");
    return;
  }
  if(t==="resolvido"){
@@ -651,12 +761,12 @@ function responder(t){
    registrarEvento("Empresa respondeu e problema foi resolvido");
    document.getElementById("status").textContent="🟢 Problema resolvido";
    document.getElementById("bar").style.width="100%";
-   estrelas();salvarLocal();tela("resolvido");return;
+   estrelas();if(!salvarLocal())return;tela("resolvido");return;
  }
  s.status="nao";
  document.getElementById("respostaTexto").value="";
  document.getElementById("protResposta").value=s.protEmpresa||"";
- salvarLocal();tela("resposta");
+ if(!salvarLocal())return;tela("resposta");
 }
 
 function analisarResposta(){
@@ -666,7 +776,7 @@ function analisarResposta(){
  registrarEvento("Resposta da empresa registrada");
  registrarEvento("Empresa respondeu, mas problema não foi resolvido");
  document.getElementById("continuaTexto").textContent="A resposta foi registrada e o histórico do caso foi mantido. O próximo passo é continuar a resolução.";
- salvarLocal();tela("continua");
+ if(!salvarLocal())return;tela("continua");
 }
 
 function rota(){
@@ -737,12 +847,12 @@ function encaminhamento(){
      b.title="O canal depende do órgão, localidade ou instituição. O RESOLVA não inventa um endereço.";
    }
  }
- salvarLocal();tela("encaminhamento");
+ if(!salvarLocal())return;tela("encaminhamento");
 }
 
 function abrirCanal(){
  const r=rota();
- if(r.url)window.open(r.url,"_blank");
+ if(r.url)window.location.href=r.url;
  else alert("O RESOLVA não encontrou um endereço oficial específico nesta versão. Confira o canal oficial do órgão/empresa indicado antes de acessar.");
 }
 
@@ -757,29 +867,35 @@ function selecionarNota(n){
  [1,2,3,4,5].forEach(i=>document.getElementById("star"+i).classList.toggle("selected",i===n));
  document.getElementById("notaTexto").textContent="Avaliação selecionada: "+n+" estrela"+(n>1?"s":"")+"★";
  document.getElementById("salvarAvaliacao").disabled=false;
- salvarLocal();
+ if(!salvarLocal())return;
 }
 function salvar(){
  if(!s.nota){alert("Escolha uma nota antes de salvar.");return}
  s.eventos.push(["Avaliação registrada: "+s.nota+" estrela"+(s.nota>1?"s":""),data()]);
- salvarLocal();alert("Avaliação registrada. Obrigado!");novo();
+ if(!salvarLocal())return;alert("Avaliação registrada. Obrigado!");novo();
 }
 function novo(){
+ if(resolvaStorageIndisponivel){alert("Os dados protegidos estão indisponíveis. Nenhum registro foi apagado.");return}
+ const anterior=JSON.parse(JSON.stringify(s));
+ const textoAnterior=document.getElementById("problem").value;
  Object.assign(s,{problema:"",categoria:"",empresa:"",objetivo:"Resolver o problema",comprovante:"",contato:"",protocolo:"",protEmpresa:"",resposta:"",prazoResposta:"",eventos:[],nota:0,prestador:"",urgente:false,categoriaManual:false,status:"",canalUrl:"",origemMensagem:"caminho"});
- try{localStorage.removeItem("resolva_2_0")}catch(e){}
  document.getElementById("problem").value="";
+ if(!salvarLocal()){
+   Object.assign(s,anterior);
+   document.getElementById("problem").value=textoAnterior;
+   return;
+ }
  tela("home");
 }
 function configuracoes(){tela('configuracoes');}
-carregarLocal();
-if(!Array.isArray(s.casos))s.casos=[];
-if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){const d={...s};delete d.casos;s.casos.push(d);try{localStorage.setItem("resolva_2_0_casos",JSON.stringify(s.casos))}catch(e){}}
-if(s.problema)document.getElementById("problem").value=s.problema;
-// Inicialização: somente uma tela fica visível. Após Sair, sempre voltar ao Login.
 try{
+ carregarLocal();
+ if(!Array.isArray(s.casos))s.casos=[];
+ if(s.problema && s.protocolo && !s.casos.some(c=>c.protocolo===s.protocolo)){if(!salvarLocal())throw new Error("Não foi possível consolidar o histórico protegido.");}
+ if(s.problema)document.getElementById("problem").value=s.problema;
  if(localStorage.getItem("resolva_logout_v1")==="1"){mostrarLogin();}
  else{exigirLogin();}
-}catch(e){exigirLogin();}
+}catch(e){resolvaStorageIndisponivel=true;mostrarLogin("Não foi possível abrir os dados protegidos. Seus registros foram preservados; não crie outra conta nem limpe os dados do aplicativo. Tente novamente mais tarde.");}
 </script>
 </body>
 </html>
