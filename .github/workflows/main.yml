@@ -186,6 +186,7 @@ jobs:
                   @JavascriptInterface public String getItem(String n){synchronized(MainActivity.this){try{String v=securePrefs.getString(n,null);return v==null?null:decrypt(v);}catch(Exception e){return "__RESOLVA_SECURE_STORAGE_ERROR__";}}}
                   @JavascriptInterface public boolean setItem(String n,String v){synchronized(MainActivity.this){try{return securePrefs.edit().putString(n,encrypt(v)).commit();}catch(Exception e){return false;}}}
                   @JavascriptInterface public boolean removeItem(String n){synchronized(MainActivity.this){try{return securePrefs.edit().remove(n).commit();}catch(Exception e){return false;}}}
+                  @JavascriptInterface public boolean clearAll(){synchronized(MainActivity.this){try{if(!securePrefs.edit().clear().commit())return false;java.security.KeyStore ks=java.security.KeyStore.getInstance("AndroidKeyStore");ks.load(null);if(ks.containsAlias(KEY_ALIAS))ks.deleteEntry(KEY_ALIAS);return true;}catch(Exception e){return false;}}}
               }
 
               private WebView webView;
