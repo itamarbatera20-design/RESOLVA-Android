@@ -418,10 +418,8 @@ function excluirConta(){
    const bridge=window.ResolvaSecureStorage;
    if(bridge){
     if(typeof bridge.clearAll!=="function" || bridge.clearAll()!==true)throw new Error("Falha ao limpar o armazenamento protegido.");
-   }else{
-    ["resolva_2_0_bundle","resolva_2_0","resolva_2_0_casos","resolva_conta_v1"].forEach(k=>localStorage.removeItem(k));
    }
-   localStorage.removeItem("resolva_sessao_v1");
+   ["resolva_2_0_bundle","resolva_2_0","resolva_2_0_casos","resolva_conta_v1","resolva_sessao_v1","resolva_logout_v1"].forEach(k=>localStorage.removeItem(k));
    localStorage.removeItem("resolva_logout_v1");
    alert("Sua conta e os dados locais foram excluídos deste aparelho.");
    window.location.reload();
