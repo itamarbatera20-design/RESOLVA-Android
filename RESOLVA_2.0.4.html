@@ -411,15 +411,23 @@ function sair(){
  mostrarLogin("Você saiu da sua conta. Entre novamente para continuar.");
 }
 function excluirConta(){
- if(!sessaoAtiva()){alert("Entre na sua conta para solicitar a exclusão.");return;}
- const confirmou=confirm("Tem certeza de que deseja excluir sua conta do RESOLVA neste aparelho?\n\nTodos os casos e históricos serão apagados permanentemente. Essa ação não pode ser desfeita.");
- if(!confirmou)return;
- try{
-  ["resolva_2_0_bundle","resolva_2_0","resolva_2_0_casos","resolva_conta_v1"].forEach(secureRemoveItem);
-  localStorage.removeItem("resolva_sessao_v1");
-  localStorage.removeItem("resolva_logout_v1");
-  alert("Sua conta e os dados locais foram excluídos deste aparelho.");
-  window.location.reload();
+  if(!sessaoAtiva()){alert("Entre na sua conta para solicitar a exclusão.");return;}
+  const confirmou=confirm("Tem certeza de que deseja excluir sua conta do RESOLVA neste aparelho?\\n\\nTodos os casos e históricos serão apagados permanentemente. Essa ação não pode ser desfeita.");
+  if(!confirmou)return;
+  try{
+   const bridge=window.ResolvaSecureStorage;
+   if(bridge){
+    if(typeof bridge.clearAll!=="function" || bridge.clearAll()!==true)throw new Error("Falha ao limpar o armazenamento protegido.");
+   }else{
+    ["resolva_2_0_bundle","resolva_2_0","resolva_2_0_casos","resolva_conta_v1"].forEach(k=>localStorage.removeItem(k));
+   }
+   localStorage.removeItem("resolva_sessao_v1");
+   localStorage.removeItem("resolva_logout_v1");
+   alert("Sua conta e os dados locais foram excluídos deste aparelho.");
+   window.location.reload();
+  }catch(e){
+   alert("Não foi possível confirmar a exclusão completa. Verifique o armazenamento e tente novamente; se o problema continuar, entre em contato com suporte.resolva@gmail.com.");
+  }
  }catch(e){
   alert("Não foi possível concluir a exclusão com segurança. Nenhuma confirmação de exclusão foi registrada. Tente novamente; se o problema continuar, entre em contato com suporte.resolva@gmail.com.");
  }
